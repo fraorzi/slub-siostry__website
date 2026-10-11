@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties, type PointerEvent } from "react";
 import { headTable, type Table } from "@/data/seating";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
 import { VIEW } from "./PlanSvg";
-import { SeatDetails, SeatSearch } from "./SeatSearch";
+import { EnvelopeSearch } from "./EnvelopeSearch";
 import { useSeats } from "./useSeats";
 import "./seats.css";
 
@@ -15,6 +15,12 @@ const LIGHTS = Array.from({ length: 23 }, (_, i) => {
 });
 
 type Shot = { x: number; y: number; zoom: number; fit: number };
+type Drag = { id: number; x: number; y: number; sx: number; sy: number; moved: boolean };
+
+// Muszą zgadzać się z --tilt i --spin w seats.css (przeliczanie przeciągnięcia na ruch po podłodze).
+const TILT = (56 * Math.PI) / 180;
+const SPIN = (-32 * Math.PI) / 180;
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
 const applyShot = (floor: HTMLElement | null, camera: HTMLElement | null, s: Shot) => {
   if (floor) floor.style.transform = `rotateX(var(--tilt)) rotateZ(var(--spin)) translate3d(${-s.x}px, ${-s.y}px, 0)`;
@@ -27,8 +33,41 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
   const floor = useRef<HTMLDivElement>(null);
   const camera = useRef<HTMLDivElement>(null);
   const shot = useRef<Shot>({ x: VIEW.w / 2, y: VIEW.h / 2 + 20, zoom: 1, fit: 1 });
-  const api = useSeats(tables, view);
+  const search = useRef<HTMLDivElement>(null);
+  const drag = useRef<Drag | null>(null);
+  const dragged = useRef(false);
+  const api = useSeats(tables, search);
   const { focus, picked } = api;
+
+  // Przeciąganie sali: ruch palca/myszy przeliczony na przesunięcie po obróconej i pochylonej podłodze.
+  const onPointerDown = (e: PointerEvent<HTMLElement>) => {
+    if (e.button !== 0) return;
+    dragged.current = false;
+    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: shot.current.x, sy: shot.current.y, moved: false };
+  };
+  const onPointerMove = (e: PointerEvent<HTMLElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    if (!d.moved) {
+      if (Math.hypot(dx, dy) < 6) return;
+      d.moved = true;
+      dragged.current = true;
+      gsap.killTweensOf(shot.current);
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    const scale = shot.current.fit * shot.current.zoom;
+    const u = dx / scale, v = dy / scale / Math.cos(TILT);
+    const fx = u * Math.cos(-SPIN) - v * Math.sin(-SPIN);
+    const fy = u * Math.sin(-SPIN) + v * Math.cos(-SPIN);
+    shot.current.x = clamp(d.sx - fx, 0, VIEW.w);
+    shot.current.y = clamp(d.sy - fy, 0, VIEW.h);
+    applyShot(floor.current, camera.current, shot.current);
+  };
+  const onPointerUp = (e: PointerEvent<HTMLElement>) => {
+    if (drag.current?.id === e.pointerId) drag.current = null;
+  };
+  const browse = (t: Table) => { if (!dragged.current) api.browse(t); };
 
   useEffect(() => {
     const el = view.current;
@@ -48,10 +87,16 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
   }, [focus]);
 
   return (
-    <>
-      <SeatSearch api={api} hint="Wystarczą dwie litery. Polskie znaki nie są potrzebne. Możesz też kliknąć stół w sali." />
-      <div className="mt-[clamp(3rem,8vh,5rem)] grid grid-cols-1 items-start gap-gutter lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
-        <figure ref={view} className={`hall relative aspect-[1/1.05] overflow-hidden rounded-[2rem] sm:aspect-[4/3] ${focus ? "has-focus" : ""}`}>
+    <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 items-start gap-[clamp(2.5rem,5vw,4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div ref={search} className="lg:sticky lg:top-24"><EnvelopeSearch api={api} /></div>
+      <figure
+        ref={view}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className={`hall relative aspect-[1/1.05] overflow-hidden rounded-[2rem] sm:aspect-[4/3] ${focus ? "has-focus touch-none" : "touch-pan-y"}`}
+      >
           <div ref={camera} className="hall__camera">
             <div ref={floor} className="hall__floor" style={{ width: VIEW.w, height: VIEW.h }}>
               <div className="hall__wall hall__wall--back">
@@ -67,8 +112,8 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
                 <span className="hall__slab" style={{ "--z": "10px" } as CSSProperties} />
                 <span className="hall__slab" style={{ "--z": "20px" } as CSSProperties} />
                 <span className="hall__slab hall__slab--top" style={{ "--z": "28px" } as CSSProperties} />
-                <span className="hall__tag" style={{ "--z": "70px" } as CSSProperties}>{headTable.label}</span>
               </div>
+              <span className="hall__label hall__label--head" style={{ left: 285, top: 78, width: 230 }}>{headTable.label}</span>
 
               {tables.map((t) => {
                 const hit = focus?.table.no === t.no;
@@ -76,7 +121,7 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
                   <button
                     key={t.no}
                     type="button"
-                    onClick={() => api.browse(t)}
+                    onClick={() => browse(t)}
                     aria-label={`Stół ${t.no}, ${t.guests.length} miejsc`}
                     aria-pressed={hit}
                     className={`hall__table ${hit ? "is-hit" : ""}`}
@@ -105,9 +150,7 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
               <span className="hall__label hall__label--entrance" style={{ left: 400, top: 560 }}>wejście</span>
             </div>
           </div>
-        </figure>
-        <SeatDetails api={api} empty="Wpisz swoje imię, a kamera przeleci do Twojego stołu." className="lg:sticky lg:top-24" />
-      </div>
-    </>
+      </figure>
+    </div>
   );
 }
