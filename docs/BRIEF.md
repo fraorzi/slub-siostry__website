@@ -143,3 +143,7 @@ Wprowadzone: koperta przeniesiona z wejścia do sali (wpisujesz imię na koperci
 Decyzje: styl strony zostaje **Folia** (Cormorant), bez art déco. Wybrane na stałe: wejście Łuk, Sala 3D z kopertą, Żaluzje, wieczór w poziomie, aparat z polaroidami, zimne ognie, świt. Pozostałe warianty, style i ich kroje usunięte z kodu. **Do decyzji zostaje tylko sekcja „Ślub i przyjęcie”** („Tak” w literach, Rozkład, Karty, Mapa).
 
 Wprowadzone: świt gra sam, gdy sekcja jest na ekranie, a po wyjechaniu z niej wraca do nocy; trasa płynie marginesem i między sekcjami przechodzi łukiem na drugą stronę; koperta ma tylko skosy z górnych rogów; usunięta podpowiedź pod kopertą.
+
+## Runda designu 8 (2026-10-11)
+
+Decyzja: „Ślub i przyjęcie” = „Tak” w literach, ale bez wlatywania w film. Wielkie „TAK” z wideo ceremonii w środku zmniejsza się scrollem i ląduje na słowie „tak” w nagłówku „Mówimy sobie „tak””, wokół pojawia się reszta sekcji (opis, miejsce, wideo w łuku), potem strona przewija się dalej. Wszystkie sekcje wybrane: panel „Projekt” i pozostałe warianty usunięte.
