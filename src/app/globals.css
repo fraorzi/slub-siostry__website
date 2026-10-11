@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @property --shine { syntax: "<number>"; inherits: false; initial-value: 0.5; }
+/* Przesunięcie światła przy hoverze. Osobna zmienna: przejście nie zależy od --shine animowanego scrollem,
+   więc nie urywa się w pół drogi po zjechaniu kursorem. */
+@property --glint { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
 
 :root {
   --ivory: oklch(98% 0.006 90);
@@ -31,6 +34,7 @@
   --accent: var(--gold);
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glint: cubic-bezier(0.45, 0, 0.2, 1);
 }
 
 html {
@@ -108,7 +112,7 @@ body {
 .foil, .foil-bg {
   background-image: var(--foil);
   background-size: 320% 100%;
-  background-position: calc(var(--shine) * 100%) 50%;
+  background-position: calc(var(--shine) * 100% + var(--glint)) 50%;
 }
 /* Folia maluje tylko w obrębie pudełka: tekst nie może z niego wystawać, inaczej znika. */
 .foil {
@@ -117,16 +121,16 @@ body {
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
-.foil-bg { color: var(--night); transition: background-position 900ms var(--ease); }
-.foil-bg:hover { background-position: calc(var(--shine) * 100% + 40%) 50%; }
+.foil-bg { color: var(--night); transition: --glint 1200ms var(--ease-glint); }
+.foil-bg:hover { --glint: 40%; }
 .btn-gold {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap;
   border-radius: 999px; padding: 0.75rem 1.5rem; font-weight: 500; color: var(--ink);
-  background-image: var(--btn-foil); background-size: 260% 100%; background-position: calc(var(--shine) * 100%) 50%;
+  background-image: var(--btn-foil); background-size: 260% 100%; background-position: calc(var(--shine) * 100% + var(--glint)) 50%;
   box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.75), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 8px 24px -12px oklch(45% 0.08 75 / 0.55);
-  transition: background-position 900ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
+  transition: --glint 1200ms var(--ease-glint), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.btn-gold:hover { background-position: calc(var(--shine) * 100% + 35%) 50%; box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.85), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 12px 30px -12px oklch(45% 0.08 75 / 0.7); }
+.btn-gold:hover { --glint: 35%; box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.85), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 12px 30px -12px oklch(45% 0.08 75 / 0.7); }
 .btn-gold:active { transform: translateY(1px); }
 .btn-ghost {
   display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; cursor: pointer;
