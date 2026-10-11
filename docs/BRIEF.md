@@ -137,3 +137,9 @@ Poprawione błędy: przebudowa animacji wejścia przy każdym chowaniu paska adr
 Wybory: krój art déco węższy (Josefin Sans cienki domyślnie, w panelu też Poiret One, Yanone Kaffeesatz, Smooch Sans); Sala 3D, Żaluzje, Wieczór w poziomie, Aparat, Zimne ognie, Świt jako domyślne warianty.
 
 Wprowadzone: koperta przeniesiona z wejścia do sali (wpisujesz imię na kopercie, klapka się otwiera, karta pokazuje stół i sąsiadów); okno w literach przeniesione do ślubu jako wielkie „TAK” z wideo ceremonii; trasa zamiast złotej nici, ciągła przez całą stronę z przystankami na godzinach; salę 3D można przeciągać; etykieta pary młodej leży na podłodze przy ich stole; czytelniejszy napis na żaluzjach; wieczór: kreski wyrównane, na końcu taśmy 21:30 znika; polaroidy na sznurku nad aparatem; trzy wolne zimne ognie i czwarty pod kursorem; świt rozjaśnia się sam po wejściu na ekran, mniejszy odstęp do stopki; poprawione artefakty w rogach okrągłych zdjęć.
+
+## Runda designu 7 (2026-10-11)
+
+Decyzje: styl strony zostaje **Folia** (Cormorant), bez art déco. Wybrane na stałe: wejście Łuk, Sala 3D z kopertą, Żaluzje, wieczór w poziomie, aparat z polaroidami, zimne ognie, świt. Pozostałe warianty, style i ich kroje usunięte z kodu. **Do decyzji zostaje tylko sekcja „Ślub i przyjęcie”** („Tak” w literach, Rozkład, Karty, Mapa).
+
+Wprowadzone: świt gra sam, gdy sekcja jest na ekranie, a po wyjechaniu z niej wraca do nocy; trasa płynie marginesem i między sekcjami przechodzi łukiem na drugą stronę; koperta ma tylko skosy z górnych rogów; usunięta podpowiedź pod kopertą.
