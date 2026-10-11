@@ -43,13 +43,6 @@ export function Choreography() {
         gsap.fromTo(frame, { clipPath: `inset(12% 0% 0% 0%${round})`, opacity: 0.001 }, { clipPath: `inset(0% 0% 0% 0%${round})`, opacity: 1, duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: frame, start: "top 85%", once: true } });
         if (media) gsap.fromTo(media, { scale: 1.14 }, { scale: 1.02, ease: "none", scrollTrigger: { trigger: frame, start: "top bottom", end: "bottom top", scrub: true } });
       });
-      gsap.utils.toArray<HTMLElement>("[data-draw]").forEach((line) => {
-        gsap.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "expo.inOut", scrollTrigger: { trigger: line, start: "top 85%", once: true } });
-      });
-      gsap.utils.toArray<HTMLElement>("[data-fly]").forEach((el) => {
-        const dir = el.dataset.fly === "right" ? 1 : -1;
-        gsap.from(el, { x: dir * 90, y: 60, rotate: dir * 7, opacity: 0, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } });
-      });
       gsap.utils.toArray<HTMLElement>("[data-rise]").forEach((el) => {
         gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } });
       });
