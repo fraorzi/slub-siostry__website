@@ -99,3 +99,35 @@ Funkcje:
 4. Imiona pary, miejsce, liczba gości, język (czy są goście zagraniczni).
 5. Pomysł na żart / wspólne wspomnienie z siostrą.
 6. Co ma powstać ze zdjęć gości: album online, film, kolaż, wydruk.
+
+## Runda designu 5 — pracownia (2026-10-11)
+
+Prośba: kilka propozycji redesignu każdej sekcji i całego stylu strony, do przeklikania w panelu; szczególnie plan sali. Strona ma działać płynnie na telefonie bez utraty jakości animacji.
+
+Wprowadzone: panel „Projekt” (prawy dolny róg, dev lub `DESIGN_LAB=1`) z 5 stylami strony i 2–4 wariantami każdej sekcji. Przycisk „Kopiuj link” daje adres z zestawem.
+
+| Sekcja | Warianty |
+| --- | --- |
+| Styl strony | Folia (obecny), Papeteria, Art déco, Galeria, Kino 35 mm |
+| Wejście | Łuk (obecny), Koperta, Okno w literach |
+| Ślub i przyjęcie | Rozkład (obecny), Karty, Trasa |
+| Twoje miejsce | Plan drukowany (obecny), Sala 3D, Winietka, Gwiazdozbiory |
+| Złota godzina | Pełny kadr (obecny), Zachód słońca, Żaluzje |
+| Wieczór | Kolumny (obecny), Program, W poziomie |
+| Zdjęcia gości | Polaroidy (obecny), Aparat jednorazowy, Ciemnia |
+| Północ | Wideo (obecny), Zimne ognie, Zegar |
+| Koniec | Noc (obecny), Świt |
+
+Wydajność: wideo ładuje się dopiero przed wejściem na ekran i gra tylko na ekranie (telefon dostaje 720p), połysk folii liczy CSS (`animation-timeline: scroll()`), animacje opierają się na `transform`/`opacity`, album gości pokazuje miniatury porcjami po 24.
+
+Poprawione błędy: przebudowa animacji wejścia przy każdym chowaniu paska adresu na telefonie; przewijanie strony pod otwartym easter eggiem; klawiatura wyskakująca po „Pokaż całą salę” na telefonie; brak przewinięcia do planu po wyborze osoby na telefonie; wyciek pamięci podglądów uploadu; pełnowymiarowe zdjęcia (3–8 MB) w albumie.
+
+### Media
+
+- Wszystkie zdjęcia i wideo pochodzą z Pexels i Unsplash. Licencje obu serwisów pozwalają na darmowe użycie, także bez podpisu autora i z modyfikacjami; zabronione jest m.in. sprzedawanie niezmienionych kopii i pokazywanie rozpoznawalnych osób w obraźliwym kontekście. Prywatna strona za hasłem mieści się w licencji, także wideo z północy (Pexels 19492425). Pexels nie gwarantuje zgód osób z kadru, więc docelowo lepiej podmienić je na własne nagranie.
+- Do czasu `pnpm media` pliki idą prosto z CDN Pexels/Unsplash: wideo intro to plik 1920×1080 bez wersji na telefon. Po `pnpm media` wszystko jest lokalne, skompresowane i z długim cache.
+
+## Decyzje do podjęcia — pracownia
+
+1. Styl strony i wariant każdej sekcji (panel „Projekt”). Po wyborze reszta wariantów i krojów jest usuwana.
+2. Prawdziwe zdjęcia i wideo pary: podmiana w `scripts/media-sources.json` (ścieżka do pliku albo URL) + `pnpm media`.

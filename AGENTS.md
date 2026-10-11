@@ -1,12 +1,15 @@
 # Strona ślubu siostry
 
-Strona na ślub siostry właściciela repo, robiona przez niego (brata). Etap: **stack** — koncepcja „dzień godzina po godzinie” przeniesiona z makiety do Next.js 16 + Tailwind 4 + GSAP/Lenis; czeka na uwagi użytkownika.
+Strona na ślub siostry właściciela repo, robiona przez niego (brata). Etap: **pracownia** — koncepcja „dzień godzina po godzinie” w Next.js 16 + Tailwind 4 + GSAP/Lenis, z panelem do porównywania stylów strony i wariantów sekcji; czeka na wybór użytkownika.
 
 Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). Przeczytaj przed każdą decyzją projektową.
 
 ## Gdzie co jest
 
-- Treści (imiona, data, miejsca, plan dnia, media): `src/content/wedding.ts`. Lista gości i stoły: `src/data/seating.ts`.
+- Treści (imiona, data, miejsca, plan dnia): `src/content/wedding.ts`. Lista gości i stoły: `src/data/seating.ts`.
+- Media: źródła w `scripts/media-sources.json`, `pnpm media` (wymaga ffmpeg) pobiera je, kompresuje do `public/media` (wideo 720p/1080p + plakat) i przepisuje `src/content/media.ts`. Wideo zawsze przez `LoopVideo` (leniwe ładowanie, pauza poza ekranem).
+- Pracownia projektu: katalog stylów i wariantów w `src/design/catalog.ts`, panel `src/components/lab/DesignLab.tsx` (dev zawsze, produkcja z `DESIGN_LAB=1`). Wybór siedzi w ciastku `projekt`; link `/?projekt=…` je ustawia. Każda sekcja ma swój katalog w `src/components/<sekcja>/`, `page.tsx` wybiera wariant.
+- Styl strony to `html[data-style]` w `globals.css`: nadpisuje paletę, kroje (`--font-display`, `--font-hour`, `--font-label-face`) i ozdobnik `.orn` nad godziną. Po wyborze stylu: usunąć pozostałe style, ich kroje z `layout.tsx` i niewybrane warianty.
 - Sekcja jest „godziną”, gdy ma `data-time` i `data-theme`; `Choreography` przełącza porę dnia, gdy sekcja wchodzi na środek ekranu.
 - Złoto to zawsze folia: klasy `foil` (tekst) i `foil-bg` (tło, linie) z `globals.css`; połysk przesuwa się ze scrollem (`--shine` ustawiane w `Choreography`). Główne przyciski: `btn-gold` — jasne błyszczące złoto z ciemnym tekstem.
 - Grupowanie treści: odstępami, typografią i krótką złotą kreską — bez złotych ramek wokół bloków (użytkownik ich nie chce). Focus pól: miękka złota poświata, nie obrys.
@@ -16,7 +19,8 @@ Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). 
 - Easter egg (5× „&” w `Intro`) ma pozostać nieodkrywalny: żadnych podpowiedzi w treści, kursora-rączki ani reakcji na pojedyncze kliknięcie.
 - Etap sekcji zdjęć (`before` / `day` / `after`) liczy `src/lib/stage.ts` z `WEDDING_DAY`. Podgląd w dev: `/?etap=przed|dzien|po`.
 - Dostęp: `SITE_KEY` + `src/proxy.ts`; gość wchodzi linkiem `/?k=…` (np. z QR) albo hasłem na `/wejscie`. API sprawdza to samo ciastko.
-- Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF).
+- Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` (oryginał + miniatura WebP z `sharp` do albumu) — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF). Logika uploadu wspólna dla wariantów: `src/components/photos/usePhotoUpload.tsx`.
+- Wartości liczone z `Math.sin/cos` w JSX zaokrąglaj: Node i przeglądarka różnią się na ostatniej cyfrze, co psuje hydrację.
 
 ## Zasady
 
