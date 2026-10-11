@@ -131,3 +131,9 @@ Poprawione błędy: przebudowa animacji wejścia przy każdym chowaniu paska adr
 
 1. Styl strony i wariant każdej sekcji (panel „Projekt”). Po wyborze reszta wariantów i krojów jest usuwana.
 2. Prawdziwe zdjęcia i wideo pary: podmiana w `scripts/media-sources.json` (ścieżka do pliku albo URL) + `pnpm media`.
+
+## Runda designu 6 (2026-10-11)
+
+Wybory: krój art déco węższy (Josefin Sans cienki domyślnie, w panelu też Poiret One, Yanone Kaffeesatz, Smooch Sans); Sala 3D, Żaluzje, Wieczór w poziomie, Aparat, Zimne ognie, Świt jako domyślne warianty.
+
+Wprowadzone: koperta przeniesiona z wejścia do sali (wpisujesz imię na kopercie, klapka się otwiera, karta pokazuje stół i sąsiadów); okno w literach przeniesione do ślubu jako wielkie „TAK” z wideo ceremonii; trasa zamiast złotej nici, ciągła przez całą stronę z przystankami na godzinach; salę 3D można przeciągać; etykieta pary młodej leży na podłodze przy ich stole; czytelniejszy napis na żaluzjach; wieczór: kreski wyrównane, na końcu taśmy 21:30 znika; polaroidy na sznurku nad aparatem; trzy wolne zimne ognie i czwarty pod kursorem; świt rozjaśnia się sam po wejściu na ekran, mniejszy odstęp do stopki; poprawione artefakty w rogach okrągłych zdjęć.

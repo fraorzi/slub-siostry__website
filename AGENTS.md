@@ -11,6 +11,8 @@ Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). 
 - Pracownia projektu: katalog stylów i wariantów w `src/design/catalog.ts`, panel `src/components/lab/DesignLab.tsx` (dev i podglądy Vercela zawsze, produkcja z `DESIGN_LAB=1`). Wybór siedzi w ciastku `projekt`; link `/?projekt=…` je ustawia. Każda sekcja ma swój katalog w `src/components/<sekcja>/`, `page.tsx` wybiera wariant.
 - Styl strony to `html[data-style]` w `globals.css`: nadpisuje paletę, kroje (`--font-display`, `--font-hour`, `--font-label-face`) i ozdobnik `.orn` nad godziną. Po wyborze stylu: usunąć pozostałe style, ich kroje z `layout.tsx` i niewybrane warianty.
 - Sekcja jest „godziną”, gdy ma `data-time` i `data-theme`; `Choreography` przełącza porę dnia, gdy sekcja wchodzi na środek ekranu.
+- Trasa dnia (`RouteThread`) zastąpiła złotą nić: biegnie lewym marginesem przez wszystkie sekcje od ślubu do końca, kształt i przystanki liczy z pozycji `[data-time]` i `.hour-time`, więc sekcje muszą zostać w tym samym kontenerze w `page.tsx`.
+- Art déco ma osobny wybór kroju nagłówków (`decoFont` w katalogu, `html[data-deco-font]`).
 - Złoto to zawsze folia: klasy `foil` (tekst) i `foil-bg` (tło, linie) z `globals.css`; połysk przesuwa się ze scrollem (`--shine` ustawiane w `Choreography`). Główne przyciski: `btn-gold` — jasne błyszczące złoto z ciemnym tekstem.
 - Grupowanie treści: odstępami, typografią i krótką złotą kreską — bez złotych ramek wokół bloków (użytkownik ich nie chce). Focus pól: miękka złota poświata, nie obrys.
 - Zmienne pory dnia (`--bg`, `--fg`, paleta folii) żyją wyłącznie na `body[data-theme]`; `data-theme` na sekcji to tylko sygnał. Za dnia folia jest jasna (białe złoto w słońcu), wieczorem cieplejsza.
