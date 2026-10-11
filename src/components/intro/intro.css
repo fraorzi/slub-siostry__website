@@ -1,0 +1,11 @@
+.intro { height: 260vh; }
+.intro__media { clip-path: inset(14% 39% 12% 39% round 300px 300px 0px 0px); will-change: clip-path; }
+@media (max-width: 860px) {
+  .intro__media { clip-path: inset(22% 18% 22% 18% round 300px 300px 0px 0px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro { height: auto; }
+  .intro__stage { position: relative; }
+  .intro__media { clip-path: none; }
+}

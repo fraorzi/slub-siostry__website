@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Caveat, Cormorant_Garamond } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Caveat, Cormorant_Garamond, Courier_Prime } from "next/font/google";
 import localFont from "next/font/local";
 import { wedding } from "@/content/wedding";
 import "./globals.css";
@@ -21,15 +21,25 @@ const general = localFont({
   ],
 });
 
+// Cyfry licznika na aparacie jednorazowym. Bez preloadu: pobiera się dopiero, gdy aparat jest na ekranie.
+const courier = Courier_Prime({ variable: "--font-courier", subsets: ["latin", "latin-ext"], weight: ["400", "700"], preload: false });
+
+const fonts = [cormorant, caveat, general, courier].map((f) => f.variable).join(" ");
+
 export const metadata: Metadata = {
   title: `${wedding.bride} & ${wedding.groom} — ${wedding.dateLabel}`,
   description: "Zaproszenie i informacje dla gości weselnych.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false, noimageindex: true } },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#fbf9f4",
+  colorScheme: "light",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pl" className={`${cormorant.variable} ${caveat.variable} ${general.variable} antialiased`}>
+    <html lang="pl" className={`${fonts} antialiased`}>
       <body data-theme="day" className="font-sans text-base leading-relaxed">{children}</body>
     </html>
   );

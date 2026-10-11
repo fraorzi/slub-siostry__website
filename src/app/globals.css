@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@property --shine { syntax: "<number>"; inherits: false; initial-value: 0.5; }
+/* Przesunięcie światła przy hoverze. Osobna zmienna: przejście nie zależy od --shine animowanego scrollem,
+   więc nie urywa się w pół drogi po zjechaniu kursorem. */
+@property --glint { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+
 :root {
   --ivory: oklch(98% 0.006 90);
   --champagne: oklch(93.5% 0.03 82);
@@ -20,7 +25,7 @@
   --foil-rich: oklch(78% 0.12 84);
   --foil-light: oklch(95% 0.055 95);
   --btn-foil: linear-gradient(115deg, oklch(87% 0.07 86) 0%, oklch(95% 0.045 94) 22%, oklch(89% 0.075 88) 42%, oklch(97% 0.03 95) 62%, oklch(88% 0.07 86) 82%, oklch(94% 0.05 92) 100%);
-  --shine: 0.5;
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   --bg: var(--ivory);
   --fg: var(--ink);
@@ -29,6 +34,14 @@
   --accent: var(--gold);
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glint: cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+html {
+  --font-display: var(--font-cormorant);
+  --font-body: var(--font-general);
+  --font-hour: var(--font-display);
+  --font-label-face: var(--font-body);
 }
 
 body[data-theme="champagne"] { --bg: var(--champagne); }
@@ -50,6 +63,7 @@ body[data-theme="night"] { --bg: var(--night); --fg: var(--pearl); --muted: var(
   --color-ivory: var(--ivory);
   --color-champagne: var(--champagne);
   --color-night: var(--night);
+  --color-dusk: var(--dusk);
   --color-pearl: var(--pearl);
   --color-pearl-soft: var(--pearl-soft);
   --color-gold-bright: var(--gold-bright);
@@ -58,15 +72,24 @@ body[data-theme="night"] { --bg: var(--night); --fg: var(--pearl); --muted: var(
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --font-serif: var(--font-display), "Didot", Georgia, serif;
-  --font-sans: var(--font-general), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), "Bradley Hand", cursive;
+  --font-label: var(--font-label-face), ui-monospace, sans-serif;
   --spacing-gutter: var(--gutter);
   --ease-soft: var(--ease);
 }
 
 html, body { overflow-x: clip; }
+
+/* Pasek przewijania wtapia się w stronę: bez tła, cienki złoty uchwyt widoczny na jasnym i ciemnym. */
+html { scrollbar-width: thin; scrollbar-color: oklch(72% 0.09 80 / 0.55) transparent; }
+html::-webkit-scrollbar { width: 8px; height: 8px; background: transparent; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background: oklch(72% 0.09 80 / 0.55) padding-box; }
+html::-webkit-scrollbar-thumb:hover { background-color: oklch(72% 0.1 80 / 0.85); }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
 
 body {
   --foil: linear-gradient(115deg, var(--foil-deep) 0%, var(--foil-mid) 14%, var(--foil-light) 27%, var(--foil-rich) 38%, var(--foil-mid) 50%, var(--foil-deep) 60%, var(--foil-rich) 72%, var(--foil-light) 84%, var(--foil-mid) 100%);
@@ -79,42 +102,47 @@ body {
   :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 4px; }
 }
 
-html { --font-display: var(--font-cormorant); }
-
 @layer components {
 .foil, .foil-bg {
   background-image: var(--foil);
   background-size: 320% 100%;
-  background-position: calc(var(--shine) * 100%) 50%;
+  background-position: calc(var(--shine) * 100% + var(--glint)) 50%;
 }
+/* Folia maluje tylko w obrębie pudełka: tekst nie może z niego wystawać, inaczej znika. */
 .foil {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
-.foil-bg { color: var(--night); transition: background-position 900ms var(--ease); }
-.foil-bg:hover { background-position: calc(var(--shine) * 100% + 40%) 50%; }
+.foil-bg { color: var(--night); transition: --glint 1200ms var(--ease-glint); }
+.foil-bg:hover { --glint: 40%; }
 .btn-gold {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; white-space: nowrap;
   border-radius: 999px; padding: 0.75rem 1.5rem; font-weight: 500; color: var(--ink);
-  background-image: var(--btn-foil); background-size: 260% 100%; background-position: calc(var(--shine) * 100%) 50%;
+  background-image: var(--btn-foil); background-size: 260% 100%; background-position: calc(var(--shine) * 100% + var(--glint)) 50%;
   box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.75), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 8px 24px -12px oklch(45% 0.08 75 / 0.55);
-  transition: background-position 900ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
+  transition: --glint 1200ms var(--ease-glint), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.btn-gold:hover { background-position: calc(var(--shine) * 100% + 35%) 50%; box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.85), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 12px 30px -12px oklch(45% 0.08 75 / 0.7); }
+.btn-gold:hover { --glint: 35%; box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.85), inset 0 -1px 0 oklch(60% 0.06 80 / 0.25), 0 12px 30px -12px oklch(45% 0.08 75 / 0.7); }
 .btn-gold:active { transform: translateY(1px); }
-
-.polaroid {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(168deg, oklch(98.8% 0.007 92), oklch(95.5% 0.013 86));
-  box-shadow:
-    0 0 0 0.5px oklch(70% 0.02 80 / 0.4),
-    0 1px 1px oklch(20% 0.02 70 / 0.2),
-    0 8px 14px -6px oklch(15% 0.02 70 / 0.35),
-    0 34px 60px -26px oklch(10% 0.02 70 / 0.7);
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; cursor: pointer;
+  border-radius: 999px; border: 1px solid var(--line); padding: 0.625rem 1.25rem; font-size: 0.875rem;
+  transition: border-color 300ms var(--ease);
 }
+.btn-ghost:hover { border-color: var(--fg); }
+
+.hour-time {
+  display: inline-block;
+  width: max-content;
+  font-family: var(--font-hour), Georgia, serif;
+  font-size: clamp(4.5rem, 13vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums;
+}
+
 .polaroid__photo {
   background: radial-gradient(120% 95% at 28% 18%, oklch(36% 0.03 72), oklch(17% 0.015 70) 70%);
   box-shadow: inset 0 0 0 1px oklch(10% 0 0 / 0.3), inset 0 2px 10px oklch(0% 0 0 / 0.35);
@@ -123,42 +151,37 @@ html { --font-display: var(--font-cormorant); }
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(128deg, oklch(100% 0 0 / 0.22) 0%, oklch(100% 0 0 / 0.04) 32%, transparent 55%, oklch(100% 0 0 / 0.07) 100%);
 }
+.paper {
+  background-image: var(--noise), linear-gradient(168deg, oklch(99% 0.006 90), oklch(96% 0.012 86));
+  color: var(--ink);
+}
+}
+
+/* Połysk folii liczony przez przeglądarkę ze scrolla, bez JS na każdą klatkę. */
+@keyframes shine { from { --shine: 0; } to { --shine: 1; } }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .foil, .foil-bg, .btn-gold { animation: shine 1s linear 7 alternate both; animation-timeline: scroll(root); }
+  }
 }
 
 .tbd { border-bottom: 1px dashed var(--accent); }
-
-.intro { height: 260vh; }
-.intro__media { clip-path: inset(14% 39% 12% 39% round 300px 300px 0px 0px); will-change: clip-path; }
-@media (max-width: 860px) {
-  .intro__media { clip-path: inset(22% 18% 22% 18% round 300px 300px 0px 0px); }
-}
-
-.plan { --pg-deep: oklch(55% 0.09 72); --pg-mid: oklch(70% 0.11 80); --pg-rich: oklch(81% 0.11 86); --pg-light: oklch(95% 0.05 95); }
-.plan .tbl { fill: var(--ivory); stroke: oklch(64% 0.065 78); stroke-width: 1; transition: stroke 300ms var(--ease); }
-.plan .tbl-inner { fill: none; stroke: oklch(84% 0.035 84); stroke-width: 0.75; pointer-events: none; }
-.plan .chair { fill: oklch(80% 0.025 80); }
-.plan .chair.is-you { fill: var(--ink); }
-.plan .tno { font-family: var(--font-display); font-size: 22px; font-weight: 500; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.plan .lbl { font-family: var(--font-general); font-size: 10px; letter-spacing: 0.22em; fill: var(--ink-soft); text-anchor: middle; text-transform: uppercase; }
-.plan .floor { stroke: oklch(80% 0.03 82); stroke-width: 1; }
-.plan .parquet { fill: none; stroke: oklch(87% 0.022 84); stroke-width: 0.6; }
-.plan .floor-lbl { fill: oklch(52% 0.04 78); }
-.plan .entrance path { fill: none; stroke: oklch(70% 0.03 80); stroke-width: 1; }
-.plan .table { cursor: pointer; outline: none; transition: opacity 600ms var(--ease); }
-.plan .table:hover .tbl { stroke: var(--pg-deep); }
-.plan .table:focus-visible .tbl { stroke: var(--ink); stroke-width: 2; }
-.plan .head, .plan .floor, .plan .floor-lbl, .plan .entrance { transition: opacity 600ms var(--ease); }
-.plan.has-focus .table:not(.is-hit), .plan.has-focus .head, .plan.has-focus .floor, .plan.has-focus .floor-lbl, .plan.has-focus .entrance { opacity: 0.32; }
-.plan .is-hit .tbl { stroke: var(--pg-deep); }
-.plan .you { font-family: var(--font-general); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
 
 @keyframes pop { from { opacity: 0; transform: translateY(12px); } }
 .pop { animation: pop 700ms var(--ease) both; }
 
 @media (prefers-reduced-motion: reduce) {
   body { transition: none; }
-  .intro { height: auto; }
-  .intro__stage { position: relative; }
-  .intro__media { clip-path: none; }
   .pop { animation: none; }
 }
+
+/* Trasa dnia (RouteThread) */
+.route__base { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 6; }
+.route__gold { fill: none; stroke: url(#route-foil); stroke-width: 1.6; stroke-linecap: round; }
+.route__head { transition: opacity 400ms var(--ease); }
+.route__dot { fill: var(--bg); stroke: var(--line); stroke-width: 1; transition: fill 600ms var(--ease), stroke 600ms var(--ease); }
+.route__halo { fill: oklch(85% 0.1 85 / 0.35); opacity: 0; transform-box: fill-box; transform-origin: center; }
+.route__pin.is-on .route__dot { fill: var(--foil-rich); stroke: var(--foil-deep); }
+.route__pin.is-on .route__halo { animation: route-ping 1.6s var(--ease) 1; }
+@keyframes route-ping { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(2.2); } }
+@media (prefers-reduced-motion: reduce) { .route__pin.is-on .route__halo { animation: none; } }

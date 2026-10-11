@@ -1,13 +1,14 @@
-# Runda designu 3 (2026-10-04)
+# Runda designu 5 — pracownia (2026-10-11)
 
-- [x] Złoto za dnia: mniejszy kontrast połysku, bez cienia pod tekstem
-- [x] `btn-gold`: jasne błyszczące złoto, ciemny tekst
-- [x] Usunięte złote ramki: miejsca, plan sali, upload, ramka zaproszenia
-- [x] Pole z imieniem: pigułka, focus jako złota poświata + przebłysk; globalny focus w `@layer base`
-- [x] Upload od nowa: stos polaroidów, „wywoływanie” zdjęcia, album z polaroidów
-- [x] Weryfikacja: tsc, lint, build, 1440/375/320, upload 3 JPEG + 1 txt przez drop
+- [x] Katalog stylów i wariantów + panel „Projekt” (ciastko `projekt`, link `?projekt=`)
+- [x] 5 stylów strony: Folia, Papeteria, Art déco, Galeria, Kino 35 mm
+- [x] Warianty sekcji: wejście ×3, miejsca ×3, plan sali ×4, złota godzina ×3, wieczór ×3, zdjęcia ×3, północ ×3, koniec ×2
+- [x] Media: `pnpm media` (720p/1080p, plakat, hash w nazwie, cache na rok), `LoopVideo`
+- [x] Miniatury zdjęć gości (`sharp`), album porcjami
+- [x] Poprawki: resize na telefonie, blokada scrolla pod easter eggiem, fokus po „Pokaż całą salę”, przewinięcie do planu, hydracja SVG
+- [x] Weryfikacja: tsc, lint, build, zrzuty 1440 i 390 wszystkich wariantów, przełączanie w panelu
 
 ## Review
 
-- Przyczyna „kwadratowego focusu”: globalny `:focus-visible` poza warstwami nadpisywał `outline-none` z Tailwinda — przeniesiony do `@layer base`.
-- Pliki testowe z uploadu usunięte.
+- Pexels i Unsplash są zablokowane w sieci sesji w chmurze: `pnpm media` sprawdzone na lokalnych plikach testowych, prawdziwe pobranie trzeba uruchomić lokalnie.
+- Chromium z Playwrighta nie ma H.264, więc w testach wideo spada na drugie źródło; w Chrome/Safari gra 720p na telefonie.

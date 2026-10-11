@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ACCESS_COOKIE, ACCESS_PARAM, hasAccess } from "@/lib/access";
 
+const YEAR = 60 * 60 * 24 * 365;
+
 export function proxy(request: NextRequest) {
   const { nextUrl } = request;
   const given = nextUrl.searchParams.get(ACCESS_PARAM);
@@ -15,7 +17,7 @@ export function proxy(request: NextRequest) {
     }
     if (target.pathname === "/wejscie") target.pathname = "/";
     const response = NextResponse.redirect(target);
-    response.cookies.set(ACCESS_COOKIE, given, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 365, path: "/" });
+    response.cookies.set(ACCESS_COOKIE, given, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: YEAR, path: "/" });
     return response;
   }
 

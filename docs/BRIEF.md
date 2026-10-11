@@ -99,3 +99,51 @@ Funkcje:
 4. Imiona pary, miejsce, liczba gości, język (czy są goście zagraniczni).
 5. Pomysł na żart / wspólne wspomnienie z siostrą.
 6. Co ma powstać ze zdjęć gości: album online, film, kolaż, wydruk.
+
+## Runda designu 5 — pracownia (2026-10-11)
+
+Prośba: kilka propozycji redesignu każdej sekcji i całego stylu strony, do przeklikania w panelu; szczególnie plan sali. Strona ma działać płynnie na telefonie bez utraty jakości animacji.
+
+Wprowadzone: panel „Projekt” (prawy dolny róg; dev, podglądy Vercela albo `DESIGN_LAB=1`) z 5 stylami strony i 2–4 wariantami każdej sekcji. Przycisk „Kopiuj link” daje adres z zestawem.
+
+| Sekcja | Warianty |
+| --- | --- |
+| Styl strony | Folia (obecny), Papeteria, Art déco, Galeria, Kino 35 mm |
+| Wejście | Łuk (obecny), Koperta, Okno w literach |
+| Ślub i przyjęcie | Rozkład (obecny), Karty, Trasa |
+| Twoje miejsce | Plan drukowany (obecny), Sala 3D, Winietka, Gwiazdozbiory |
+| Złota godzina | Pełny kadr (obecny), Zachód słońca, Żaluzje |
+| Wieczór | Kolumny (obecny), Program, W poziomie |
+| Zdjęcia gości | Polaroidy (obecny), Aparat jednorazowy, Ciemnia |
+| Północ | Wideo (obecny), Zimne ognie, Zegar |
+| Koniec | Noc (obecny), Świt |
+
+Wydajność: wideo ładuje się dopiero przed wejściem na ekran i gra tylko na ekranie (telefon dostaje 720p), połysk folii liczy CSS (`animation-timeline: scroll()`), animacje opierają się na `transform`/`opacity`, album gości pokazuje miniatury porcjami po 24.
+
+Poprawione błędy: przebudowa animacji wejścia przy każdym chowaniu paska adresu na telefonie; przewijanie strony pod otwartym easter eggiem; klawiatura wyskakująca po „Pokaż całą salę” na telefonie; brak przewinięcia do planu po wyborze osoby na telefonie; wyciek pamięci podglądów uploadu; pełnowymiarowe zdjęcia (3–8 MB) w albumie.
+
+### Media
+
+- Wszystkie zdjęcia i wideo pochodzą z Pexels i Unsplash. Licencje obu serwisów pozwalają na darmowe użycie, także bez podpisu autora i z modyfikacjami; zabronione jest m.in. sprzedawanie niezmienionych kopii i pokazywanie rozpoznawalnych osób w obraźliwym kontekście. Prywatna strona za hasłem mieści się w licencji, także wideo z północy (Pexels 19492425). Pexels nie gwarantuje zgód osób z kadru, więc docelowo lepiej podmienić je na własne nagranie.
+- Do czasu `pnpm media` pliki idą prosto z CDN Pexels/Unsplash: wideo intro to plik 1920×1080 bez wersji na telefon. Po `pnpm media` wszystko jest lokalne, skompresowane i z długim cache.
+
+## Decyzje do podjęcia — pracownia
+
+1. Styl strony i wariant każdej sekcji (panel „Projekt”). Po wyborze reszta wariantów i krojów jest usuwana.
+2. Prawdziwe zdjęcia i wideo pary: podmiana w `scripts/media-sources.json` (ścieżka do pliku albo URL) + `pnpm media`.
+
+## Runda designu 6 (2026-10-11)
+
+Wybory: krój art déco węższy (Josefin Sans cienki domyślnie, w panelu też Poiret One, Yanone Kaffeesatz, Smooch Sans); Sala 3D, Żaluzje, Wieczór w poziomie, Aparat, Zimne ognie, Świt jako domyślne warianty.
+
+Wprowadzone: koperta przeniesiona z wejścia do sali (wpisujesz imię na kopercie, klapka się otwiera, karta pokazuje stół i sąsiadów); okno w literach przeniesione do ślubu jako wielkie „TAK” z wideo ceremonii; trasa zamiast złotej nici, ciągła przez całą stronę z przystankami na godzinach; salę 3D można przeciągać; etykieta pary młodej leży na podłodze przy ich stole; czytelniejszy napis na żaluzjach; wieczór: kreski wyrównane, na końcu taśmy 21:30 znika; polaroidy na sznurku nad aparatem; trzy wolne zimne ognie i czwarty pod kursorem; świt rozjaśnia się sam po wejściu na ekran, mniejszy odstęp do stopki; poprawione artefakty w rogach okrągłych zdjęć.
+
+## Runda designu 7 (2026-10-11)
+
+Decyzje: styl strony zostaje **Folia** (Cormorant), bez art déco. Wybrane na stałe: wejście Łuk, Sala 3D z kopertą, Żaluzje, wieczór w poziomie, aparat z polaroidami, zimne ognie, świt. Pozostałe warianty, style i ich kroje usunięte z kodu. **Do decyzji zostaje tylko sekcja „Ślub i przyjęcie”** („Tak” w literach, Rozkład, Karty, Mapa).
+
+Wprowadzone: świt gra sam, gdy sekcja jest na ekranie, a po wyjechaniu z niej wraca do nocy; trasa płynie marginesem i między sekcjami przechodzi łukiem na drugą stronę; koperta ma tylko skosy z górnych rogów; usunięta podpowiedź pod kopertą.
+
+## Runda designu 8 (2026-10-11)
+
+Decyzja: „Ślub i przyjęcie” = „Tak” w literach, ale bez wlatywania w film. Wielkie „TAK” z wideo ceremonii w środku zmniejsza się scrollem i ląduje na słowie „tak” w nagłówku „Mówimy sobie „tak””, wokół pojawia się reszta sekcji (opis, miejsce, wideo w łuku), potem strona przewija się dalej. Wszystkie sekcje wybrane: panel „Projekt” i pozostałe warianty usunięte.

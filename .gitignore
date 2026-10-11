@@ -47,4 +47,7 @@ next-env.d.ts
 
 # zdjęcia gości (lokalny magazyn w dev)
 /.uploads/
+
+# surowe pobrania skryptu media
+/.media-cache/
 !.env.example
