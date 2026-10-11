@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
-import { Credits } from "./FinaleNight";
+import { Credits } from "./Late";
 
 const STARS = Array.from({ length: 70 }, (_, i) => ({ x: `${((i * 47.3) % 100).toFixed(2)}%`, y: `${((i * 29.7) % 70).toFixed(2)}%`, s: 1 + (i % 3) * 0.5, d: `${((i * 0.41) % 3).toFixed(2)}s` }));
 
-/** 04:00: gdy sekcja wejdzie na ekran, noc sama, powoli przechodzi w świt i wschodzi słońce. */
+/** 04:00: gdy sekcja jest na ekranie, noc sama, powoli przechodzi w świt i wschodzi słońce. */
 export function FinaleDawn() {
   const root = useRef<HTMLElement>(null);
 
@@ -20,8 +20,9 @@ export function FinaleDawn() {
       gsap.set(q(".dawn__sun"), { yPercent: 0 });
       return;
     }
+    // Gra sama, gdy sekcja jest na ekranie; po wyjechaniu wraca do nocy, po powrocie gra od nowa.
     const ctx = gsap.context(() => {
-      gsap.timeline({ scrollTrigger: { trigger: section, start: "top 55%", once: true } })
+      gsap.timeline({ scrollTrigger: { trigger: section, start: "top 35%", end: "bottom 65%", toggleActions: "play none none reset" } })
         .fromTo(".dawn__violet", { opacity: 0 }, { opacity: 1, ease: "sine.inOut", duration: 4 }, 0)
         .fromTo(".dawn__stars", { opacity: 1 }, { opacity: 0, ease: "sine.in", duration: 4.5 }, 1)
         .fromTo(".dawn__sun", { yPercent: 110 }, { yPercent: 0, ease: "sine.out", duration: 6.5 }, 1.2)
