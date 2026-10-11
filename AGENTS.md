@@ -1,0 +1,37 @@
+# Strona ślubu siostry
+
+Strona na ślub siostry właściciela repo, robiona przez niego (brata). Etap: **stack** — koncepcja „dzień godzina po godzinie” przeniesiona z makiety do Next.js 16 + Tailwind 4 + GSAP/Lenis; czeka na uwagi użytkownika.
+
+Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). Przeczytaj przed każdą decyzją projektową.
+
+## Gdzie co jest
+
+- Treści (imiona, data, miejsca, plan dnia, media): `src/content/wedding.ts`. Lista gości i stoły: `src/data/seating.ts`.
+- Sekcja jest „godziną”, gdy ma `data-time` i `data-theme`; `Choreography` przełącza porę dnia, gdy sekcja wchodzi na środek ekranu.
+- Złoto to zawsze folia: klasy `foil` (tekst) i `foil-bg` (tło, linie) z `globals.css`; połysk przesuwa się ze scrollem (`--shine` ustawiane w `Choreography`). Główne przyciski: `btn-gold` — jasne błyszczące złoto z ciemnym tekstem.
+- Grupowanie treści: odstępami, typografią i krótką złotą kreską — bez złotych ramek wokół bloków (użytkownik ich nie chce). Focus pól: miękka złota poświata, nie obrys.
+- Zmienne pory dnia (`--bg`, `--fg`, paleta folii) żyją wyłącznie na `body[data-theme]`; `data-theme` na sekcji to tylko sygnał. Za dnia folia jest jasna (białe złoto w słońcu), wieczorem cieplejsza.
+- Klasy folii i `btn-gold` siedzą w `@layer components`, globalny `:focus-visible` w `@layer base` — muszą tam zostać, inaczej nadpisują utility Tailwinda (np. `absolute`).
+- Font nagłówków: Cormorant Garamond (`--font-display`); tekst: General Sans; odręczne podpisy na polaroidach: Caveat (`font-hand`).
+- Easter egg (5× „&” w `Intro`) ma pozostać nieodkrywalny: żadnych podpowiedzi w treści, kursora-rączki ani reakcji na pojedyncze kliknięcie.
+- Etap sekcji zdjęć (`before` / `day` / `after`) liczy `src/lib/stage.ts` z `WEDDING_DAY`. Podgląd w dev: `/?etap=przed|dzien|po`.
+- Dostęp: `SITE_KEY` + `src/proxy.ts`; gość wchodzi linkiem `/?k=…` (np. z QR) albo hasłem na `/wejscie`. API sprawdza to samo ciastko.
+- Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF).
+
+## Zasady
+
+- Treści strony i rozmowa po polsku.
+- Proces: prawdziwe benchmarki → akceptacja użytkownika → makieta → stack. Nowy kierunek wizualny wraca do benchmarków.
+- Zdjęcia i wideo: prawdziwe, z licencją (Unsplash, Pexels) jako zastępstwo, docelowo zdjęcia pary.
+- Imiona, data, miejsce, lista gości i plan sali tylko od użytkownika; do tego czasu widoczny placeholder.
+- Dane gości (imiona, przypisanie do stołów, zdjęcia) to dane osobowe: dostęp za hasłem lub linkiem z tokenem, bez indeksowania w wyszukiwarkach.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
