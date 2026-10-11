@@ -125,7 +125,6 @@ export function EnvelopeSearch({ api, className = "" }: { api: SeatsApi; classNa
           )}
         </div>
       </div>
-      <p className="mt-6 max-w-[34ch] text-[0.8125rem] text-muted">Wystarczą dwie litery, polskie znaki nie są potrzebne. Możesz też kliknąć stół w sali i przeciągać ją palcem albo myszą.</p>
     </div>
   );
 }
