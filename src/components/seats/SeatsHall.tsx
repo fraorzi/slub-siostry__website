@@ -3,10 +3,11 @@
 import { useEffect, useRef, type CSSProperties, type PointerEvent } from "react";
 import { headTable, type Table } from "@/data/seating";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
-import { VIEW } from "./PlanSvg";
 import { EnvelopeSearch } from "./EnvelopeSearch";
 import { useSeats } from "./useSeats";
 import "./seats.css";
+
+const VIEW = { w: 800, h: 580 };
 
 // Pozycje zaokrąglone: serwer i przeglądarka muszą wypisać identyczne style.
 const LIGHTS = Array.from({ length: 23 }, (_, i) => {

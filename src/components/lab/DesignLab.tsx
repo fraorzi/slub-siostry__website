@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { DESIGN_COOKIE, DESIGN_PARAM, decoFonts, defaultDesign, sectionKeys, sections, serializeDesign, styles, type Design, type Option, type SectionKey } from "@/design/catalog";
+import { DESIGN_COOKIE, DESIGN_PARAM, defaultDesign, sectionKeys, sections, serializeDesign, type Design, type Option, type SectionKey } from "@/design/catalog";
 import { scrollToElement } from "@/lib/scroll";
 
 const OPEN_KEY = "pracownia-otwarta";
@@ -14,16 +14,14 @@ const saveOpen = (open: boolean) => {
   try { localStorage.setItem(OPEN_KEY, open ? "1" : "0"); } catch {}
 };
 
-/** Zapis w ciastku (czyta je serwer) i natychmiastowa zmiana stylu bez czekania na odświeżenie. */
+/** Zapis w ciastku, które czyta serwer. */
 const persist = (design: Design) => {
   document.cookie = `${DESIGN_COOKIE}=${encodeURIComponent(serializeDesign(design))}; path=/; max-age=31536000; samesite=lax`;
-  document.documentElement.dataset.style = design.style;
-  document.documentElement.dataset.decoFont = design.decoFont;
 };
 
 const pick = <T,>(list: readonly T[]) => list[Math.floor(Math.random() * list.length)];
 
-/** Pracownia projektu: przełącza styl całej strony i warianty sekcji. Widoczna tylko w dev albo z DESIGN_LAB=1. */
+/** Pracownia projektu: przełącza warianty sekcji, w których wybór jeszcze trwa. Widoczna w dev, na podglądach Vercela albo z DESIGN_LAB=1. */
 export function DesignLab({ design }: { design: Design }) {
   const router = useRouter();
   const [draft, setDraft] = useState(design);
@@ -62,7 +60,7 @@ export function DesignLab({ design }: { design: Design }) {
   const setSection = (key: SectionKey, id: string) => apply({ ...draft, [key]: id } as Design, sections[key].anchor);
 
   const shuffle = () => {
-    const next = { style: pick(styles).id, decoFont: pick(decoFonts).id } as Design;
+    const next = {} as Design;
     for (const k of sectionKeys) (next as Record<string, string>)[k] = pick<Option>(sections[k].variants).id;
     apply(next, null);
   };
@@ -108,63 +106,13 @@ export function DesignLab({ design }: { design: Design }) {
         <header className="sticky top-0 z-10 flex items-start justify-between gap-4 bg-[oklch(16%_0.01_70/0.97)] px-5 pb-3 pt-4">
           <div>
             <p className="text-[15px] font-medium">Pracownia projektu</p>
-            <p className="mt-0.5 text-[oklch(70%_0.015_80)]">Klikaj warianty. Goście tego panelu nie widzą.</p>
+            <p className="mt-0.5 text-[oklch(70%_0.015_80)]">Reszta strony jest już wybrana. Goście tego panelu nie widzą.</p>
           </div>
           <span aria-live="polite" className="mt-1 shrink-0 text-[11px] uppercase tracking-[0.14em] text-[oklch(80%_0.1_85)]">{pending ? "Ładuję…" : ""}</span>
         </header>
 
-        <section className="px-5 pb-2 pt-2">
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-[oklch(70%_0.015_80)]">Styl całej strony</h2>
-          <div role="radiogroup" aria-label="Styl strony" className="mt-3 grid gap-2">
-            {styles.map((s) => {
-              const on = draft.style === s.id;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  onClick={() => apply({ ...draft, style: s.id }, null)}
-                  className={`grid cursor-pointer grid-cols-[1fr_auto] items-center gap-x-3 rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${on ? "bg-white/[0.08] ring-[oklch(80%_0.1_85)]" : "ring-white/10 hover:bg-white/[0.04]"}`}
-                >
-                  <span className="text-[22px] leading-none" style={{ fontFamily: `var(${s.font})` }}>{s.name}</span>
-                  <span aria-hidden className="flex -space-x-1">
-                    {s.swatch.map((c) => <span key={c} className="size-4 rounded-full ring-1 ring-black/30" style={{ background: c }} />)}
-                  </span>
-                  <span className="col-span-2 mt-1.5 text-[12px] text-[oklch(72%_0.015_80)]">{s.note}</span>
-                </button>
-              );
-            })}
-          </div>
-          {draft.style === "deco" && (
-            <div className="mt-4">
-              <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-[oklch(70%_0.015_80)]">Krój art déco</h3>
-              <div role="radiogroup" aria-label="Krój art déco" className="mt-2 grid grid-cols-2 gap-1.5">
-                {decoFonts.map((f) => {
-                  const on = draft.decoFont === f.id;
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={on}
-                      title={f.note}
-                      onClick={() => apply({ ...draft, decoFont: f.id }, null)}
-                      className={`cursor-pointer rounded-xl px-3 py-2 text-left ring-1 transition-colors ${on ? "bg-white/[0.08] ring-[oklch(80%_0.1_85)]" : "ring-white/10 hover:bg-white/[0.04]"}`}
-                    >
-                      <span className="block text-[24px] leading-none" style={{ fontFamily: `var(${f.font})`, fontWeight: f.weight }}>15:00</span>
-                      <span className="mt-1 block text-[11px] text-[oklch(72%_0.015_80)]">{f.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-2 text-[12px] text-[oklch(72%_0.015_80)]">{decoFonts.find((f) => f.id === draft.decoFont)?.note}</p>
-            </div>
-          )}
-        </section>
-
         <section className="px-5 pb-4 pt-5">
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-[oklch(70%_0.015_80)]">Sekcje</h2>
+          <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-[oklch(70%_0.015_80)]">Do decyzji</h2>
           <ol className="mt-3 grid gap-5">
             {sectionKeys.map((key) => {
               const sec = sections[key];

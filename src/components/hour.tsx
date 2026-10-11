@@ -2,12 +2,9 @@ import type { ReactNode } from "react";
 import type { DayTheme } from "@/content/wedding";
 import { hasWeddingDay, type CalendarEvent } from "@/lib/calendar";
 
-/** Duża godzina ze złotej folii. `orn` to ozdobnik nad nią, który pokazują tylko niektóre style. */
+/** Duża godzina ze złotej folii. */
 export const HourTime = ({ children, className = "" }: { children: string; className?: string }) => (
-  <>
-    <span aria-hidden className="orn" data-tc={children} />
-    <p data-rise className={`hour-time foil ${className}`}>{children}</p>
-  </>
+  <p data-rise className={`hour-time foil ${className}`}>{children}</p>
 );
 
 export const HourTitle = ({ children, className = "" }: { children: ReactNode; className?: string }) => (

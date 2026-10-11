@@ -3,12 +3,12 @@
 import { useEffect, useRef } from "react";
 import { HourTime, HourTitle } from "@/components/hour";
 import { prefersReducedMotion } from "@/lib/scroll";
-import { MIDNIGHT_TITLE } from "./MidnightFilm";
 
 type Spark = { x: number; y: number; px: number; py: number; vx: number; vy: number; life: number; age: number; kids: boolean };
 type Point = { x: number; y: number; t: number };
 type Pen = { trail: Point[]; x: number; y: number; on: boolean };
 
+const MIDNIGHT_TITLE = "Północ. Nikt nie idzie do domu.";
 const TRAIL_SECONDS = 2.4;
 const MAX_SPARKS = 520;
 const GRAVITY = 300;

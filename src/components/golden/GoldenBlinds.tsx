@@ -5,9 +5,9 @@ import { useEffect, useRef } from "react";
 import { HourTime, HourTitle } from "@/components/hour";
 import { wedding } from "@/content/wedding";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
-import { GOLDEN_LINE } from "./GoldenFrame";
 
 const STRIPS = 7;
+const GOLDEN_LINE = "My znikamy na chwilę na zdjęcia. Wy nie musicie nigdzie znikać.";
 
 /** Kadr pocięty na pionowe pasy, każdy płynie z inną prędkością i składa się w całość na środku ekranu. */
 export function GoldenBlinds() {

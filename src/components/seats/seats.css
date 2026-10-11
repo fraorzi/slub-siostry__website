@@ -1,22 +1,3 @@
-.plan { --pg-deep: oklch(55% 0.09 72); --pg-mid: oklch(70% 0.11 80); --pg-rich: oklch(81% 0.11 86); --pg-light: oklch(95% 0.05 95); }
-.plan .tbl { fill: var(--ivory); stroke: oklch(64% 0.065 78); stroke-width: 1; transition: stroke 300ms var(--ease); }
-.plan .tbl-inner { fill: none; stroke: oklch(84% 0.035 84); stroke-width: 0.75; pointer-events: none; }
-.plan .chair { fill: oklch(80% 0.025 80); }
-.plan .chair.is-you { fill: var(--ink); }
-.plan .tno { font-family: var(--font-display); font-size: 22px; font-weight: 500; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.plan .lbl { font-family: var(--font-body); font-size: 10px; letter-spacing: 0.22em; fill: var(--ink-soft); text-anchor: middle; text-transform: uppercase; }
-.plan .floor { stroke: oklch(80% 0.03 82); stroke-width: 1; }
-.plan .parquet { fill: none; stroke: oklch(87% 0.022 84); stroke-width: 0.6; }
-.plan .floor-lbl { fill: oklch(52% 0.04 78); }
-.plan .entrance path { fill: none; stroke: oklch(70% 0.03 80); stroke-width: 1; }
-.plan .table { outline: none; transition: opacity 600ms var(--ease); }
-.plan .table.cursor-pointer:hover .tbl { stroke: var(--pg-deep); }
-.plan .table:focus-visible .tbl { stroke: var(--ink); stroke-width: 2; }
-.plan .head, .plan .floor, .plan .floor-lbl, .plan .entrance { transition: opacity 600ms var(--ease); }
-.plan.has-focus .table:not(.is-hit), .plan.has-focus .head, .plan.has-focus .floor, .plan.has-focus .floor-lbl, .plan.has-focus .entrance { opacity: 0.32; }
-.plan .is-hit .tbl { stroke: var(--pg-deep); }
-.plan .you { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
-
 /* Sala 3D */
 .hall {
   --tilt: 56deg; --spin: -32deg;
@@ -105,63 +86,6 @@
 .hall.has-focus .hall__table:not(.is-hit) .hall__tag, .hall.has-focus .hall__table:not(.is-hit) .hall__flame { opacity: 0.35; }
 @media (prefers-reduced-motion: reduce) { .hall__light, .hall__flame { animation: none; } }
 
-/* Winietka */
-.escort-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: clamp(1.75rem, 4vw, 2.75rem); padding: clamp(1rem, 4vw, 3rem) 0; perspective: 1400px; }
-.escort { position: relative; width: min(84vw, 26rem); aspect-ratio: 1.6; transform-style: preserve-3d; transition: transform 1200ms var(--ease); animation: escort-in 900ms var(--ease) both; }
-@keyframes escort-in { from { opacity: 0; transform: translateY(16px) rotateX(18deg); } }
-.escort.is-flipped { transform: rotateY(180deg); animation: none; }
-.escort__face {
-  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 0.75rem; padding: 1.5rem;
-  border-radius: 3px; backface-visibility: hidden; text-align: center;
-  box-shadow: 0 1px 2px oklch(30% 0.02 70 / 0.18), 0 40px 70px -35px oklch(25% 0.03 70 / 0.55);
-}
-.escort__face--back { transform: rotateY(180deg); gap: 0; }
-.escort__fold { position: absolute; left: 6%; right: 6%; top: 18%; height: 1px; background: linear-gradient(90deg, transparent, oklch(80% 0.02 80 / 0.7), transparent); }
-.escort__name {
-  font-family: var(--font-pinyon), var(--font-display), cursive; font-size: clamp(2rem, 6.5vw, 3.2rem); line-height: 1.25; color: var(--ink); padding: 0 0.2em;
-  animation: write 1300ms cubic-bezier(0.55, 0.1, 0.35, 1) 150ms both;
-}
-.escort__name--empty { color: oklch(70% 0.02 80); border-bottom: 1px dotted oklch(75% 0.03 80); animation: none; }
-@keyframes write { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-.escort-mates { display: flex; max-width: 34rem; flex-wrap: wrap; justify-content: center; gap: 0.5rem; pointer-events: none; }
-.escort-mate {
-  padding: 0.5rem 0.85rem; border-radius: 2px; font-family: var(--font-display); font-style: italic; font-size: 1rem; line-height: 1.1;
-  box-shadow: 0 10px 20px -12px oklch(25% 0.03 70 / 0.6); rotate: calc(var(--fan) / 6);
-  animation: mate-in 700ms var(--ease) calc(400ms + var(--i) * 90ms) both;
-}
-.escort-mate.is-delayed { animation-delay: calc(2500ms + var(--i) * 90ms); }
-@keyframes mate-in { from { opacity: 0; transform: translateY(18px) scale(0.92); } }
-@media (prefers-reduced-motion: reduce) {
-  .escort, .escort__name, .escort-mate { animation: none; }
-  .escort { transition: none; }
-}
-
-/* Gwiazdozbiory */
-.sky { background: oklch(13% 0.03 265); box-shadow: 0 1px 2px oklch(20% 0.03 265 / 0.3), 0 50px 100px -50px oklch(15% 0.05 265 / 0.8); }
-.sky__field circle { fill: oklch(92% 0.02 260); opacity: 0.7; }
-.sky__twinkle { animation: twinkle 3.2s ease-in-out infinite alternate; }
-.sky__star { fill: oklch(98% 0.02 90); }
-.sky__constellation { cursor: pointer; outline: none; transition: opacity 700ms var(--ease); }
-.sky__lines { fill: none; stroke: oklch(85% 0.08 85); stroke-width: 0.6; opacity: 0.35; stroke-linejoin: round; transition: opacity 600ms var(--ease); }
-.sky__constellation:hover .sky__lines, .sky__constellation:focus-visible .sky__lines { opacity: 0.8; }
-.sky__constellation.is-hit .sky__lines { opacity: 1; stroke-width: 0.9; stroke-dasharray: 1; animation: sky-draw 1.6s var(--ease) 0.5s both; }
-@keyframes sky-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-.sky__label { font-family: var(--font-display); font-size: 12px; font-style: italic; letter-spacing: 0.04em; fill: oklch(85% 0.06 85); text-anchor: middle; opacity: 0.75; transition: opacity 600ms var(--ease); }
-.sky__name { font-family: var(--font-body); font-size: 7.5px; letter-spacing: 0.04em; fill: oklch(92% 0.02 85); dominant-baseline: central; animation: pop 700ms var(--ease) 0.9s both; }
-.sky__name.is-you { fill: oklch(88% 0.12 88); font-weight: 500; font-size: 9px; }
-.sky__you { transform-box: fill-box; transform-origin: center; animation: sky-pulse 2.4s ease-in-out infinite; }
-@keyframes sky-pulse { 0%, 100% { transform: scale(0.85); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; } }
-.has-focus .sky__constellation:not(.is-hit), .has-focus .sky__head { opacity: 0.3; }
-.has-focus .is-hit .sky__label { opacity: 0; }
-.sky__meteor { stroke: oklch(97% 0.02 90); stroke-width: 1; stroke-linecap: round; opacity: 0; animation: meteor 11s linear 3s infinite; }
-@keyframes meteor {
-  0% { transform: translate(560px, 30px); opacity: 0; }
-  2% { opacity: 0.9; }
-  6% { transform: translate(760px, 105px); opacity: 0; }
-  100% { transform: translate(760px, 105px); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) { .sky__twinkle, .sky__you, .sky__meteor { animation: none; } }
-
 /* Koperta z wyszukiwarką (Sala 3D) */
 .envelope { width: min(100%, 32rem); aspect-ratio: 1.42; position: relative; perspective: 1600px; margin-inline: auto; }
 .envelope__back, .envelope__pocket, .envelope__flap { position: absolute; inset: 0; }
@@ -185,10 +109,6 @@
   clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
   border-radius: 0 0 6px 6px;
   filter: drop-shadow(0 -1px 0 oklch(80% 0.02 80));
-}
-.envelope__pocket::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to top right, transparent 49.6%, oklch(70% 0.02 80 / 0.35) 50%, transparent 50.4%), linear-gradient(to top left, transparent 49.6%, oklch(70% 0.02 80 / 0.35) 50%, transparent 50.4%);
 }
 .envelope__flap { z-index: 4; transform-origin: 50% 0; transform-style: preserve-3d; height: 50%; }
 .envelope__flap-face { position: absolute; inset: 0; backface-visibility: hidden; clip-path: polygon(0 0, 100% 0, 50% 100%); }

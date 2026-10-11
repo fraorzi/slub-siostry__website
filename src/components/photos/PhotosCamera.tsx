@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { Photo } from "@/lib/photos";
 import type { Stage } from "@/lib/stage";
-import { Line, type Print } from "./PhotosDarkroom";
+import { Clothesline, type Print } from "./Clothesline";
 import { plural, usePhotoUpload } from "./usePhotoUpload";
 import "./photos.css";
 
@@ -27,7 +27,7 @@ export function PhotosCamera({ stage, initial }: { stage: Stage; initial: Photo[
   return (
     <div className="mt-[clamp(3rem,8vh,5rem)]">
       <div className="-mx-gutter mb-[clamp(2rem,6vh,4rem)]">
-        <Line prints={hanging} className="darkroom__line--polaroid" />
+        <Clothesline prints={hanging} />
       </div>
       <div {...drop} className="grid items-center gap-[clamp(3rem,6vw,6rem)] md:grid-cols-[minmax(0,1fr)_minmax(0,auto)]">
         <div>
