@@ -104,7 +104,7 @@ Funkcje:
 
 Prośba: kilka propozycji redesignu każdej sekcji i całego stylu strony, do przeklikania w panelu; szczególnie plan sali. Strona ma działać płynnie na telefonie bez utraty jakości animacji.
 
-Wprowadzone: panel „Projekt” (prawy dolny róg, dev lub `DESIGN_LAB=1`) z 5 stylami strony i 2–4 wariantami każdej sekcji. Przycisk „Kopiuj link” daje adres z zestawem.
+Wprowadzone: panel „Projekt” (prawy dolny róg; dev, podglądy Vercela albo `DESIGN_LAB=1`) z 5 stylami strony i 2–4 wariantami każdej sekcji. Przycisk „Kopiuj link” daje adres z zestawem.
 
 | Sekcja | Warianty |
 | --- | --- |

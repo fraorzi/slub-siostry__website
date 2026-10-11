@@ -8,7 +8,7 @@ Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). 
 
 - Treści (imiona, data, miejsca, plan dnia): `src/content/wedding.ts`. Lista gości i stoły: `src/data/seating.ts`.
 - Media: źródła w `scripts/media-sources.json`, `pnpm media` (wymaga ffmpeg) pobiera je, kompresuje do `public/media` (wideo 720p/1080p + plakat) i przepisuje `src/content/media.ts`. Wideo zawsze przez `LoopVideo` (leniwe ładowanie, pauza poza ekranem).
-- Pracownia projektu: katalog stylów i wariantów w `src/design/catalog.ts`, panel `src/components/lab/DesignLab.tsx` (dev zawsze, produkcja z `DESIGN_LAB=1`). Wybór siedzi w ciastku `projekt`; link `/?projekt=…` je ustawia. Każda sekcja ma swój katalog w `src/components/<sekcja>/`, `page.tsx` wybiera wariant.
+- Pracownia projektu: katalog stylów i wariantów w `src/design/catalog.ts`, panel `src/components/lab/DesignLab.tsx` (dev i podglądy Vercela zawsze, produkcja z `DESIGN_LAB=1`). Wybór siedzi w ciastku `projekt`; link `/?projekt=…` je ustawia. Każda sekcja ma swój katalog w `src/components/<sekcja>/`, `page.tsx` wybiera wariant.
 - Styl strony to `html[data-style]` w `globals.css`: nadpisuje paletę, kroje (`--font-display`, `--font-hour`, `--font-label-face`) i ozdobnik `.orn` nad godziną. Po wyborze stylu: usunąć pozostałe style, ich kroje z `layout.tsx` i niewybrane warianty.
 - Sekcja jest „godziną”, gdy ma `data-time` i `data-theme`; `Choreography` przełącza porę dnia, gdy sekcja wchodzi na środek ekranu.
 - Złoto to zawsze folia: klasy `foil` (tekst) i `foil-bg` (tło, linie) z `globals.css`; połysk przesuwa się ze scrollem (`--shine` ustawiane w `Choreography`). Główne przyciski: `btn-gold` — jasne błyszczące złoto z ciemnym tekstem.
