@@ -11,7 +11,7 @@ const Card = ({ event, tilt, from, children }: { event: CalendarEvent; tilt: str
         <HourTime className="!text-[clamp(3.75rem,8vw,7rem)]">{event.time}</HourTime>
         <HourTitle className="!text-[clamp(1.6rem,2.6vw,2.4rem)] text-ink">{event.title}</HourTitle>
       </div>
-      <div className="relative aspect-[3/4] w-[clamp(5.5rem,14vw,9.5rem)] shrink-0 overflow-hidden rounded-t-full shadow-[inset_0_0_0_1px_oklch(70%_0.03_80/0.3)]">{children}</div>
+      <div className="relative aspect-[3/4] w-[clamp(5.5rem,14vw,9.5rem)] shrink-0 overflow-hidden rounded-t-full [clip-path:inset(0_round_9999px_9999px_0_0)] shadow-[inset_0_0_0_1px_oklch(70%_0.03_80/0.3)]">{children}</div>
     </div>
     <Lead className="!text-ink-soft">{event.lead}</Lead>
     <div className="mt-8 border-t border-dashed border-[oklch(80%_0.03_80)] pt-6">

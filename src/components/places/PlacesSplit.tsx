@@ -2,12 +2,13 @@ import Image from "next/image";
 import { Hour, HourTime, HourTitle, Lead, Place } from "@/components/hour";
 import { LoopVideo } from "@/components/LoopVideo";
 import { wedding } from "@/content/wedding";
+import { TakWindow } from "./PlacesTak";
 
-export function PlacesSplit() {
+export function PlacesSplit({ ids = ["h15", "h1630"] }: { ids?: [string, string] }) {
   const { ceremony, reception } = wedding;
   return (
     <>
-      <Hour id="h15" time={ceremony.time} theme="day">
+      <Hour id={ids[0]} time={ceremony.time} theme="day">
         <div className="grid grid-cols-12 items-end gap-gutter">
           <div className="col-span-12 md:col-span-6">
             <HourTime>{ceremony.time}</HourTime>
@@ -23,7 +24,7 @@ export function PlacesSplit() {
         </div>
       </Hour>
 
-      <Hour id="h1630" time={reception.time} theme="day">
+      <Hour id={ids[1]} time={reception.time} theme="day">
         <div className="grid grid-cols-12 items-end gap-gutter">
           <div className="col-span-12 md:order-2 md:col-span-6 md:col-start-7">
             <HourTime>{reception.time}</HourTime>
@@ -36,6 +37,16 @@ export function PlacesSplit() {
           </figure>
         </div>
       </Hour>
+    </>
+  );
+}
+
+/** „Tak” w literach, a pod nim rozkład z miejscami. */
+export function PlacesTak() {
+  return (
+    <>
+      <TakWindow />
+      <PlacesSplit ids={["h1500", "h1630"]} />
     </>
   );
 }

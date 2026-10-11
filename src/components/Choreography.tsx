@@ -37,14 +37,11 @@ export function Choreography() {
 
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((frame) => {
         const media = frame.querySelector("img, video");
-        gsap.fromTo(frame, { clipPath: "inset(12% 0% 0% 0%)", opacity: 0.001 }, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1, duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: frame, start: "top 85%", once: true } });
+        // Zaokrąglenie w samym clip-path: bez niego skalowane zdjęcie wychodzi poza okrągłe rogi (artefakty w rogach).
+        const radius = getComputedStyle(frame).borderRadius;
+        const round = radius && radius !== "0px" ? ` round ${radius}` : "";
+        gsap.fromTo(frame, { clipPath: `inset(12% 0% 0% 0%${round})`, opacity: 0.001 }, { clipPath: `inset(0% 0% 0% 0%${round})`, opacity: 1, duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: frame, start: "top 85%", once: true } });
         if (media) gsap.fromTo(media, { scale: 1.14 }, { scale: 1.02, ease: "none", scrollTrigger: { trigger: frame, start: "top bottom", end: "bottom top", scrub: true } });
-      });
-      gsap.utils.toArray<HTMLElement>("[data-thread]").forEach((line) => {
-        const track = { trigger: line.parentElement, start: "top 60%", end: "bottom 60%", scrub: 0.4, invalidateOnRefresh: true };
-        gsap.fromTo(line, { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: track });
-        const bead = line.parentElement?.querySelector("[data-bead]");
-        if (bead) gsap.fromTo(bead, { y: 0 }, { y: () => line.offsetHeight, ease: "none", scrollTrigger: track });
       });
       gsap.utils.toArray<HTMLElement>("[data-draw]").forEach((line) => {
         gsap.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "expo.inOut", scrollTrigger: { trigger: line, start: "top 85%", once: true } });
@@ -52,10 +49,6 @@ export function Choreography() {
       gsap.utils.toArray<HTMLElement>("[data-fly]").forEach((el) => {
         const dir = el.dataset.fly === "right" ? 1 : -1;
         gsap.from(el, { x: dir * 90, y: 60, rotate: dir * 7, opacity: 0, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } });
-      });
-      gsap.utils.toArray<SVGPathElement>("[data-route]").forEach((path) => {
-        const track = path.closest("[data-route-track]") ?? path.parentElement;
-        gsap.fromTo(path, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: track, start: "top 65%", end: "bottom 75%", scrub: 0.5 } });
       });
       gsap.utils.toArray<HTMLElement>("[data-rise]").forEach((el) => {
         gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } });

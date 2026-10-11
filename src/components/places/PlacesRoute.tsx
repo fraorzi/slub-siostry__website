@@ -38,16 +38,9 @@ const Topo = () => (
   </svg>
 );
 
-const Pin = () => (
-  <span aria-hidden className="absolute left-[11px] top-2 z-10 grid size-6 -translate-x-1/2 place-items-center md:left-1/2">
-    <span className="absolute inset-0 animate-ping rounded-full bg-[oklch(85%_0.1_88/0.35)] [animation-duration:2.6s]" />
-    <span className="foil-bg size-3 rounded-full shadow-[0_0_0_4px_var(--bg),0_0_18px_2px_oklch(85%_0.1_88/0.6)]" />
-  </span>
-);
 
 const Stop = ({ flip, media, children }: { flip?: boolean; media: ReactNode; children: ReactNode }) => (
-  <div className="relative grid items-center gap-10 pl-10 md:grid-cols-2 md:gap-[clamp(4rem,10vw,9rem)] md:pl-0">
-    <Pin />
+  <div className="relative grid items-center gap-10 md:grid-cols-2 md:gap-[clamp(4rem,10vw,9rem)]">
     <div className={flip ? "md:order-2" : ""}>{children}</div>
     <figure data-reveal className={`relative aspect-square w-[min(72%,24rem)] overflow-hidden rounded-full shadow-[0_40px_80px_-40px_oklch(30%_0.05_70/0.6)] ${flip ? "md:order-1 md:justify-self-end" : ""}`}>
       {media}
@@ -60,20 +53,7 @@ export function PlacesRoute() {
   return (
     <section id="h15" data-time={ceremony.time} data-theme="day" className="relative overflow-hidden px-gutter py-[clamp(6rem,20vh,12rem)]">
       <Topo />
-      <div data-route-track className="relative mx-auto max-w-6xl">
-        <svg aria-hidden viewBox="0 0 220 1000" preserveAspectRatio="none" className="absolute bottom-24 left-0 top-6 w-6 md:left-1/2 md:w-[220px] md:-translate-x-1/2">
-          <defs>
-            <linearGradient id="route-foil" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" style={{ stopColor: "var(--foil-deep)" }} />
-              <stop offset="0.5" style={{ stopColor: "var(--foil-light)" }} />
-              <stop offset="1" style={{ stopColor: "var(--foil-mid)" }} />
-            </linearGradient>
-          </defs>
-          <path d="M110 0 C 180 160, 40 330, 110 500 S 180 840, 110 1000" fill="none" stroke="var(--line)" strokeWidth="1" strokeDasharray="2 6" vectorEffect="non-scaling-stroke" className="max-md:hidden" />
-          <path data-route d="M110 0 C 180 160, 40 330, 110 500 S 180 840, 110 1000" fill="none" stroke="url(#route-foil)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" pathLength={1} className="max-md:hidden" />
-          <path d="M110 0 V1000" fill="none" stroke="var(--line)" strokeWidth="1" strokeDasharray="2 6" vectorEffect="non-scaling-stroke" className="md:hidden" />
-          <path data-route d="M110 0 V1000" fill="none" stroke="url(#route-foil)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" pathLength={1} className="md:hidden" />
-        </svg>
+      <div className="relative mx-auto max-w-6xl">
 
         <Stop media={<LoopVideo src={ceremony.video} className="absolute inset-0 size-full object-cover" />}>
           <HourTime>{ceremony.time}</HourTime>
@@ -82,8 +62,8 @@ export function PlacesRoute() {
           <Place event={ceremony} className="mt-10" />
         </Stop>
 
-        <p className="relative my-[clamp(5rem,16vh,10rem)] pl-10 font-label text-[0.75rem] uppercase tracking-[0.24em] text-muted md:pl-0 md:text-center">
-          <span className="md:bg-bg md:px-4">przejazd · <span className="tbd">XX min</span></span>
+        <p className="relative my-[clamp(5rem,16vh,10rem)] font-label text-[0.75rem] uppercase tracking-[0.24em] text-muted md:text-center">
+          <span>przejazd · <span className="tbd">XX min</span></span>
         </p>
 
         <div id="h1630">
