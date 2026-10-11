@@ -78,6 +78,15 @@ body[data-theme="night"] { --bg: var(--night); --fg: var(--pearl); --muted: var(
 }
 
 html, body { overflow-x: clip; }
+
+/* Pasek przewijania wtapia się w stronę: bez tła, cienki złoty uchwyt widoczny na jasnym i ciemnym. */
+html { scrollbar-width: thin; scrollbar-color: oklch(72% 0.09 80 / 0.55) transparent; }
+html::-webkit-scrollbar { width: 8px; height: 8px; background: transparent; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background: oklch(72% 0.09 80 / 0.55) padding-box; }
+html::-webkit-scrollbar-thumb:hover { background-color: oklch(72% 0.1 80 / 0.85); }
+.lab ::-webkit-scrollbar { width: 8px; }
+.lab ::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background: oklch(80% 0.08 85 / 0.4) padding-box; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: clip; }
