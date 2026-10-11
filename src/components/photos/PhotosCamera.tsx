@@ -3,10 +3,13 @@
 import Image from "next/image";
 import type { Photo } from "@/lib/photos";
 import type { Stage } from "@/lib/stage";
+import { Line, type Print } from "./PhotosDarkroom";
 import { plural, usePhotoUpload } from "./usePhotoUpload";
 import "./photos.css";
 
 const ROLL = 27;
+// Puste polaroidy na sznurku, zanim goście coś wrzucą: podpisy podpowiadają, co warto złapać.
+const MOMENTS = ["pierwszy taniec", "toast", "Wasze zdjęcie", "tort", "parkiet", "o 3:00"];
 
 /** Kultowy aparat jednorazowy: licznik klatek, błysk lampy po każdym wysłanym zdjęciu, album jako stykówka. */
 export function PhotosCamera({ stage, initial }: { stage: Stage; initial: Photo[] }) {
@@ -14,9 +17,18 @@ export function PhotosCamera({ stage, initial }: { stage: Stage; initial: Photo[
   const left = ROLL - (sent.length % ROLL);
 
   const developing = current && current.status !== "done" ? current : null;
+  const hanging: Print[] = MOMENTS.map((caption, i) => {
+    const p = photos[i];
+    return p
+      ? { key: p.name, caption: "od gościa", node: <Image src={p.thumb ?? p.url} alt="Zdjęcie od gościa" fill unoptimized loading="lazy" sizes="12rem" className="object-cover" /> }
+      : { key: `moment-${i}`, caption, node: <span className="polaroid__photo absolute inset-0" /> };
+  });
 
   return (
     <div className="mt-[clamp(3rem,8vh,5rem)]">
+      <div className="-mx-gutter mb-[clamp(2rem,6vh,4rem)]">
+        <Line prints={hanging} className="darkroom__line--polaroid" />
+      </div>
       <div {...drop} className="grid items-center gap-[clamp(3rem,6vw,6rem)] md:grid-cols-[minmax(0,1fr)_minmax(0,auto)]">
         <div>
           <p className="max-w-[16ch] font-serif text-[clamp(2.2rem,4.4vw,3.8rem)] leading-[1.02]">

@@ -10,8 +10,6 @@ import { GoldenFrame } from "@/components/golden/GoldenFrame";
 import { GoldenSunset } from "@/components/golden/GoldenSunset";
 import { Hour, HourTime, HourTitle, Lead } from "@/components/hour";
 import { IntroArch } from "@/components/intro/IntroArch";
-import { IntroEnvelope } from "@/components/intro/IntroEnvelope";
-import { IntroWindow } from "@/components/intro/IntroWindow";
 import { DesignLab } from "@/components/lab/DesignLab";
 import { MidnightClock } from "@/components/midnight/MidnightClock";
 import { MidnightFilm } from "@/components/midnight/MidnightFilm";
@@ -21,7 +19,8 @@ import { PhotosDarkroom } from "@/components/photos/PhotosDarkroom";
 import { PhotosPolaroid } from "@/components/photos/PhotosPolaroid";
 import { PlacesCards } from "@/components/places/PlacesCards";
 import { PlacesRoute } from "@/components/places/PlacesRoute";
-import { PlacesSplit } from "@/components/places/PlacesSplit";
+import { PlacesSplit, PlacesTak } from "@/components/places/PlacesSplit";
+import { RouteThread } from "@/components/RouteThread";
 import { SeatsCard } from "@/components/seats/SeatsCard";
 import { SeatsHall } from "@/components/seats/SeatsHall";
 import { SeatsPlan } from "@/components/seats/SeatsPlan";
@@ -35,8 +34,8 @@ import { previewStage, stageFor, type Stage } from "@/lib/stage";
 
 type Table = typeof tables;
 
-const INTRO: Record<VariantOf<"intro">, ComponentType> = { luk: IntroArch, koperta: IntroEnvelope, okno: IntroWindow };
-const PLACES: Record<VariantOf<"places">, ComponentType> = { rozklad: PlacesSplit, karty: PlacesCards, trasa: PlacesRoute };
+const INTRO: Record<VariantOf<"intro">, ComponentType> = { luk: IntroArch };
+const PLACES: Record<VariantOf<"places">, ComponentType> = { tak: PlacesTak, rozklad: () => <PlacesSplit />, karty: PlacesCards, trasa: PlacesRoute };
 const SEATS: Record<VariantOf<"seats">, ComponentType<{ tables: Table }>> = { plan: SeatsPlan, sala: SeatsHall, winietki: SeatsCard, niebo: SeatsSky };
 const GOLDEN: Record<VariantOf<"golden">, ComponentType> = { kadr: GoldenFrame, zachod: GoldenSunset, paski: GoldenBlinds };
 const EVENING: Record<VariantOf<"evening">, ComponentType> = { kolumny: EveningColumns, program: EveningProgram, poziomo: EveningScroll };
@@ -65,8 +64,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <Intro />
 
         <div className="relative">
-          <span aria-hidden data-thread className="foil-bg absolute bottom-0 left-[calc(var(--gutter)/2)] top-0 hidden w-px origin-top md:block" />
-          <span aria-hidden data-bead className="foil-bg absolute left-[calc(var(--gutter)/2)] top-0 z-10 hidden size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_14px_2px_oklch(85%_0.1_88/0.55)] md:block" />
+          <RouteThread />
 
           <Places />
 
@@ -88,9 +86,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
           <Midnight />
           <Late />
+          <Finale />
         </div>
-
-        <Finale />
       </main>
       {labEnabled() && <DesignLab design={design} />}
     </>

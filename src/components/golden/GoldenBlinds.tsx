@@ -39,8 +39,8 @@ export function GoldenBlinds() {
             </div>
           ))}
         </div>
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[oklch(15%_0.012_70/0.65)] via-transparent to-transparent" />
-        <div className="blinds__text absolute inset-x-0 bottom-0 px-gutter pb-[clamp(3rem,8vh,5rem)] text-pearl">
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_top,oklch(13%_0.012_70/0.88),oklch(13%_0.012_70/0.55)_32%,transparent_62%),radial-gradient(ellipse_70%_55%_at_0%_100%,oklch(13%_0.012_70/0.6),transparent_70%)]" />
+        <div className="blinds__text absolute inset-x-0 bottom-0 px-gutter pb-[clamp(3rem,8vh,5rem)] text-pearl [text-shadow:0_2px_24px_oklch(10%_0.01_70/0.55)] [&_.hour-time]:[text-shadow:none]">
           <HourTime>19:30</HourTime>
           <HourTitle>Złota godzina.</HourTitle>
           <p className="lead mt-5 max-w-[38ch] text-[1.0625rem] text-pearl/85">{GOLDEN_LINE}</p>

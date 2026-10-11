@@ -30,8 +30,8 @@ export function EveningScroll() {
   return (
     <section ref={root} id="h21" data-time={wedding.evening[0].time} data-theme="champagne" className="relative h-[calc(240vw+100svh)] motion-reduce:h-auto md:h-[calc(140vw+100svh)]">
       <div className="sticky top-0 flex h-svh items-center overflow-hidden motion-reduce:static motion-reduce:h-auto motion-reduce:py-24">
-        <ol className="evening__track flex w-max items-center will-change-transform motion-reduce:flex-col motion-reduce:items-start">
-          <li className="evening__panel min-w-[85vw] shrink-0 px-gutter md:min-w-[60vw]">
+        <ol className="evening__track flex w-max items-start will-change-transform motion-reduce:flex-col motion-reduce:items-start">
+          <li className="evening__panel min-w-[85vw] shrink-0 px-gutter pt-8 md:min-w-[60vw]">
             <p className="font-label text-[0.8125rem] uppercase tracking-[0.3em] text-muted">Wieczór</p>
             <p className="mt-4 max-w-[14ch] font-serif text-[clamp(2.4rem,6vw,5rem)] leading-[1.02]">Najlepsze dopiero się zaczyna.</p>
           </li>
@@ -42,7 +42,8 @@ export function EveningScroll() {
               <p className="mt-6 max-w-[18ch] font-serif text-[clamp(1.8rem,4vw,3.2rem)] leading-tight">{e.label}</p>
             </li>
           ))}
-          <li className="evening__panel min-w-[85vw] shrink-0 px-gutter md:min-w-[60vw]">
+          {/* Ostatni panel ma szerokość ekranu: na końcu taśmy 21:30 wyjeżdża całkiem poza kadr. */}
+          <li className="evening__panel w-screen shrink-0 px-gutter pt-8">
             <p className="max-w-[16ch] font-serif text-[clamp(2rem,4.5vw,3.8rem)] italic leading-[1.05] text-muted">…a potem już tylko parkiet.</p>
           </li>
         </ol>

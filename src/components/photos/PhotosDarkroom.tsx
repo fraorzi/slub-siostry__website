@@ -10,11 +10,11 @@ import "./photos.css";
 const PER_LINE = 6;
 const SAG = 34;
 
-type Print = { key: string; node: ReactNode; caption?: string };
+export type Print = { key: string; node: ReactNode; caption?: string };
 
 /** Sznurek z odbitkami przypiętymi klamerkami. Zwis liczony jak parabola, odbitki lekko się kołyszą. */
-const Line = ({ prints }: { prints: Print[] }) => (
-  <div className="darkroom__line">
+export const Line = ({ prints, className = "" }: { prints: Print[]; className?: string }) => (
+  <div className={`darkroom__line ${className}`}>
     <div className="darkroom__inner">
     <svg aria-hidden viewBox="0 0 100 40" preserveAspectRatio="none" className="darkroom__string">
       <path d={`M0 6 Q50 ${6 + SAG * 2} 100 6`} fill="none" stroke="oklch(80% 0.04 60 / 0.55)" strokeWidth="1" vectorEffect="non-scaling-stroke" />

@@ -9,12 +9,12 @@ type Spark = { x: number; y: number; px: number; py: number; vx: number; vy: num
 type Point = { x: number; y: number; t: number };
 type Pen = { trail: Point[]; x: number; y: number; on: boolean };
 
-const TRAIL_SECONDS = 1.6;
+const TRAIL_SECONDS = 2.4;
 const MAX_SPARKS = 520;
 const GRAVITY = 300;
 
 /**
- * Zimne ognie na canvasie: „automatyczny” ogień kreśli znak nieskończoności jak na zdjęciu z długim czasem
+ * Zimne ognie na canvasie: trzy „automatyczne” ognie powoli kreślą wzory jak na zdjęciu z długim czasem
  * naświetlania, a gość może pisać własnym (mysz albo palec). Rysuje tylko, gdy sekcja jest na ekranie.
  */
 export function MidnightSparklers() {
@@ -40,16 +40,27 @@ export function MidnightSparklers() {
     resize();
 
     const sparks: Spark[] = [];
-    const auto: Pen = { trail: [], x: 0, y: 0, on: true };
     const hand: Pen = { trail: [], x: 0, y: 0, on: false };
-    let phase = 0;
     let clock = 0;
 
-    const lemniscate = (t: number) => {
-      const a = Math.min(w * 0.36, h * 0.5);
-      const s = Math.sin(t), c = Math.cos(t), d = 1 + s * s;
-      return { x: w / 2 + (a * c) / d, y: h * 0.4 + (a * s * c) / d };
-    };
+    // Trzy wolne zimne ognie, każdy po swojej krzywej: nieskończoność na środku, ósemka i owal po bokach.
+    const paths = [
+      (t: number) => {
+        const a = Math.min(w * 0.24, h * 0.32), s = Math.sin(t), c = Math.cos(t), d = 1 + s * s;
+        return { x: w * 0.5 + (a * c) / d, y: h * 0.36 + (a * s * c) / d };
+      },
+      (t: number) => {
+        const r = Math.min(w * 0.12, h * 0.16);
+        return { x: w * (small ? 0.24 : 0.17) + r * Math.sin(t), y: h * (small ? 0.18 : 0.3) + r * 0.9 * Math.sin(2 * t) };
+      },
+      (t: number) => {
+        const r = Math.min(w * 0.12, h * 0.15);
+        return { x: w * (small ? 0.76 : 0.83) + r * Math.cos(t), y: h * (small ? 0.58 : 0.3) + r * 0.6 * Math.sin(t) * (1 + 0.2 * Math.sin(3 * t)) };
+      },
+    ];
+    const autos = paths.map((path, i) => ({ path, phase: i * 2.1, speed: [0.42, 0.36, 0.31][i], pen: { trail: [], x: 0, y: 0, on: true } as Pen }));
+    const pens = [...autos.map((a) => a.pen), hand];
+    const perPen = small ? 2 : 4;
 
     const emit = (x: number, y: number, n: number) => {
       for (let i = 0; i < n && sparks.length < MAX_SPARKS; i++) {
@@ -78,22 +89,21 @@ export function MidnightSparklers() {
 
     const frame = (dt: number) => {
       clock += dt;
-      if (auto.on) {
-        phase += dt * 1.15;
-        const p = lemniscate(phase);
-        auto.x = p.x;
-        auto.y = p.y;
-        auto.trail.push({ x: p.x, y: p.y, t: clock });
-        emit(p.x, p.y, small ? 4 : 6);
+      for (const a of autos) {
+        a.phase += dt * a.speed;
+        const p = a.path(a.phase);
+        a.pen.x = p.x;
+        a.pen.y = p.y;
+        a.pen.trail.push({ x: p.x, y: p.y, t: clock });
+        emit(p.x, p.y, perPen);
       }
-      if (hand.on) emit(hand.x, hand.y, small ? 4 : 6);
-      for (const pen of [auto, hand]) while (pen.trail.length && clock - pen.trail[0].t > TRAIL_SECONDS) pen.trail.shift();
+      if (hand.on) emit(hand.x, hand.y, perPen + 2);
+      for (const pen of pens) while (pen.trail.length && clock - pen.trail[0].t > TRAIL_SECONDS) pen.trail.shift();
 
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
       ctx.lineCap = "round";
-      drawTrail(auto);
-      drawTrail(hand);
+      pens.forEach(drawTrail);
 
       for (let i = sparks.length - 1; i >= 0; i--) {
         const s = sparks[i];
@@ -118,7 +128,7 @@ export function MidnightSparklers() {
         ctx.lineWidth = 1.1 + k;
         ctx.stroke();
       }
-      for (const pen of [auto, hand]) {
+      for (const pen of pens) {
         if (!pen.on) continue;
         const g = ctx.createRadialGradient(pen.x, pen.y, 0, pen.x, pen.y, 26);
         g.addColorStop(0, "rgba(255, 250, 235, 0.95)");
@@ -131,12 +141,10 @@ export function MidnightSparklers() {
     };
 
     if (prefersReducedMotion()) {
-      for (let t = 0; t < Math.PI * 2; t += 0.02) auto.trail.push({ ...lemniscate(t), t: 0 });
-      clock = 0;
-      auto.on = false;
+      for (const a of autos) for (let t = 0; t < Math.PI * 2; t += 0.02) a.pen.trail.push({ ...a.path(t), t: 0 });
       ctx.globalCompositeOperation = "lighter";
       ctx.lineCap = "round";
-      drawTrail(auto);
+      autos.forEach((a) => drawTrail(a.pen));
       return;
     }
 

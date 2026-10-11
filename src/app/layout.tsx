@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Caveat, Cormorant_Garamond, Courier_Prime, Fraunces, Instrument_Serif, Inter_Tight, Josefin_Sans, Pinyon_Script, Poiret_One } from "next/font/google";
+import { Bodoni_Moda, Caveat, Cormorant_Garamond, Courier_Prime, Fraunces, Instrument_Serif, Inter_Tight, Josefin_Sans, Pinyon_Script, Poiret_One, Smooch_Sans, Yanone_Kaffeesatz } from "next/font/google";
 import localFont from "next/font/local";
 import { wedding } from "@/content/wedding";
 import { readDesign } from "@/design/server";
@@ -31,9 +31,11 @@ const josefin = Josefin_Sans({ variable: "--font-josefin", subsets: ["latin", "l
 const bodoni = Bodoni_Moda({ variable: "--font-bodoni", subsets: ["latin", "latin-ext"], style: ["normal", "italic"], axes: ["opsz"], preload: false });
 const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin", "latin-ext"], preload: false });
 const instrument = Instrument_Serif({ variable: "--font-instrument", subsets: ["latin", "latin-ext"], weight: "400", style: ["normal", "italic"], preload: false });
+const yanone = Yanone_Kaffeesatz({ variable: "--font-yanone", subsets: ["latin", "latin-ext"], preload: false });
+const smooch = Smooch_Sans({ variable: "--font-smooch", subsets: ["latin", "latin-ext"], preload: false });
 const courier = Courier_Prime({ variable: "--font-courier", subsets: ["latin", "latin-ext"], weight: ["400", "700"], preload: false });
 
-const fonts = [cormorant, caveat, general, fraunces, pinyon, poiret, josefin, bodoni, interTight, instrument, courier].map((f) => f.variable).join(" ");
+const fonts = [cormorant, caveat, general, fraunces, pinyon, poiret, josefin, bodoni, interTight, instrument, courier, yanone, smooch].map((f) => f.variable).join(" ");
 
 export const metadata: Metadata = {
   title: `${wedding.bride} & ${wedding.groom} — ${wedding.dateLabel}`,
@@ -49,7 +51,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const design = await readDesign();
   return (
-    <html lang="pl" data-style={design.style} className={`${fonts} antialiased`}>
+    <html lang="pl" data-style={design.style} data-deco-font={design.decoFont} className={`${fonts} antialiased`}>
       <body data-theme="day" className="font-sans text-base leading-relaxed">{children}</body>
     </html>
   );

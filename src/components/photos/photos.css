@@ -122,6 +122,12 @@
 .darkroom__develop { animation: develop 2.4s ease-in-out infinite alternate; }
 @keyframes develop { from { filter: brightness(2.6) contrast(0.3) sepia(1); } to { filter: brightness(1.2) contrast(0.8) sepia(0.5); } }
 
+/* Polaroidy na sznurku nad aparatem */
+.darkroom__line--polaroid .darkroom__inner { --pw: clamp(7.5rem, 12vw, 11rem); }
+.darkroom__line--polaroid .darkroom__photo { aspect-ratio: 1; }
+.darkroom__line--polaroid .darkroom__paper { background-image: var(--noise), linear-gradient(168deg, oklch(98.8% 0.007 92), oklch(95.5% 0.013 86)); }
+.darkroom__line--polaroid .darkroom__caption { font-size: clamp(1rem, 1.5vw, 1.25rem); }
+
 @media (prefers-reduced-motion: reduce) {
   .darkroom__paper, .darkroom__develop, .camera__flash.is-firing { animation: none; }
 }

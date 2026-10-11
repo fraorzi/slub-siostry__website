@@ -229,10 +229,16 @@ html[data-style="deco"] {
   --ink-soft: oklch(40% 0.015 80);
   --line-day: oklch(80% 0.03 82);
   --line-night: oklch(30% 0.03 80);
-  --font-display: var(--font-poiret);
+  --font-display: var(--font-josefin);
   --font-body: var(--font-josefin);
-  --font-hour: var(--font-poiret);
+  --font-hour: var(--font-josefin);
+  --deco-weight: 200;
 }
+/* Krój nagłówków art déco wybierany w panelu (html[data-deco-font]). */
+html[data-style="deco"][data-deco-font="poiret"] { --font-display: var(--font-poiret); --font-hour: var(--font-poiret); --deco-weight: 400; }
+html[data-style="deco"][data-deco-font="yanone"] { --font-display: var(--font-yanone); --font-hour: var(--font-yanone); --deco-weight: 200; }
+html[data-style="deco"][data-deco-font="smooch"] { --font-display: var(--font-smooch); --font-hour: var(--font-smooch); --deco-weight: 200; }
+html[data-style="deco"] :is(.hour-time, .hour-title, .font-serif) { font-weight: var(--deco-weight); }
 html[data-style="deco"] body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.07;
   background-image: radial-gradient(circle at 50% 100%, transparent 36%, var(--accent) 37% 38.5%, transparent 39.5% 56%, var(--accent) 57% 58.5%, transparent 59.5% 76%, var(--accent) 77% 78.5%, transparent 79.5%);
@@ -314,3 +320,14 @@ html[data-style="kino"] .btn-ghost { border-radius: 3px; font-family: var(--font
   .pop { animation: none; }
   html[data-style="kino"] body::after { animation: none; }
 }
+
+/* Trasa dnia (RouteThread) */
+.route__base { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 6; }
+.route__gold { fill: none; stroke: url(#route-foil); stroke-width: 1.6; stroke-linecap: round; }
+.route__head { transition: opacity 400ms var(--ease); }
+.route__dot { fill: var(--bg); stroke: var(--line); stroke-width: 1; transition: fill 600ms var(--ease), stroke 600ms var(--ease); }
+.route__halo { fill: oklch(85% 0.1 85 / 0.35); opacity: 0; transform-box: fill-box; transform-origin: center; }
+.route__pin.is-on .route__dot { fill: var(--foil-rich); stroke: var(--foil-deep); }
+.route__pin.is-on .route__halo { animation: route-ping 1.6s var(--ease) 1; }
+@keyframes route-ping { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(2.2); } }
+@media (prefers-reduced-motion: reduce) { .route__pin.is-on .route__halo { animation: none; } }
