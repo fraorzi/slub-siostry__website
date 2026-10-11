@@ -1,9 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { DESIGN_COOKIE, DESIGN_PARAM, parseDesign, serializeDesign } from "@/design/catalog";
 import { ACCESS_COOKIE, ACCESS_PARAM, hasAccess } from "@/lib/access";
+
+const YEAR = 60 * 60 * 24 * 365;
 
 export function proxy(request: NextRequest) {
   const { nextUrl } = request;
   const given = nextUrl.searchParams.get(ACCESS_PARAM);
+  const design = nextUrl.searchParams.get(DESIGN_PARAM);
+
+  // Link z panelu projektu (?projekt=…): zapisuje zestaw wariantów w ciastku i czyści adres.
+  if (design !== null && given === null) {
+    const target = nextUrl.clone();
+    target.searchParams.delete(DESIGN_PARAM);
+    const response = NextResponse.redirect(target);
+    response.cookies.set(DESIGN_COOKIE, serializeDesign(parseDesign(design)), { sameSite: "lax", maxAge: YEAR, path: "/" });
+    return response;
+  }
 
   if (given !== null) {
     const target = nextUrl.clone();
@@ -15,7 +28,7 @@ export function proxy(request: NextRequest) {
     }
     if (target.pathname === "/wejscie") target.pathname = "/";
     const response = NextResponse.redirect(target);
-    response.cookies.set(ACCESS_COOKIE, given, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 365, path: "/" });
+    response.cookies.set(ACCESS_COOKIE, given, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: YEAR, path: "/" });
     return response;
   }
 

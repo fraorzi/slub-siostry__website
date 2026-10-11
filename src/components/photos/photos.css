@@ -1,0 +1,127 @@
+/* Aparat jednorazowy */
+.camera { transition: transform 700ms var(--ease); }
+.camera:not(:disabled):hover { transform: rotate(-2deg) translateY(-4px); }
+.camera.is-drag { transform: scale(1.04) rotate(-1deg); }
+.camera:not(:disabled):active .camera__shutter { transform: translateY(3px); }
+.camera__body {
+  position: relative; display: block; aspect-ratio: 1.72; border-radius: 16px;
+  background: linear-gradient(180deg, oklch(26% 0.01 70), oklch(17% 0.01 70));
+  box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.15), 0 2px 3px oklch(10% 0 0 / 0.3), 0 40px 70px -30px oklch(10% 0.02 70 / 0.7);
+}
+.camera__body > span { position: absolute; display: block; }
+.camera__wrap {
+  inset: 9% 2.5% 9% 2.5%; border-radius: 6px; overflow: hidden;
+  background:
+    linear-gradient(90deg, transparent 0 74%, oklch(76% 0.1 82) 74% 77%, transparent 77% 79%, oklch(80% 0.1 85) 79% 80%, transparent 80%),
+    var(--noise), linear-gradient(180deg, oklch(97% 0.012 88), oklch(92% 0.02 84));
+  box-shadow: inset 0 0 0 1px oklch(70% 0.03 80 / 0.4);
+}
+.camera__brand {
+  position: absolute; right: 4.5%; top: 50%; translate: 0 -50%; writing-mode: vertical-rl; rotate: 180deg;
+  font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem, 2.4vw, 1.7rem); color: var(--ink); letter-spacing: 0.02em;
+}
+.camera__iso { position: absolute; left: 4%; bottom: 7%; font: 500 0.6rem/1 var(--font-label-face); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+.camera__viewfinder {
+  left: 9%; top: 15%; width: 15%; height: 15%; border-radius: 4px;
+  background: radial-gradient(circle at 30% 30%, oklch(70% 0.04 240 / 0.6), transparent 40%), linear-gradient(135deg, oklch(30% 0.03 250), oklch(12% 0.02 250));
+  box-shadow: 0 0 0 3px oklch(20% 0.01 70), inset 0 0 6px oklch(0% 0 0 / 0.6);
+}
+.camera__flash {
+  right: 21%; top: 13%; width: 22%; height: 21%; border-radius: 4px;
+  background: repeating-linear-gradient(90deg, oklch(98% 0.004 90) 0 3px, oklch(89% 0.006 90) 3px 4px);
+  box-shadow: 0 0 0 3px oklch(22% 0.01 70), inset 0 0 8px oklch(70% 0.01 90 / 0.6);
+}
+.camera__flash.is-firing { animation: flash 900ms ease-out; }
+@keyframes flash {
+  0% { box-shadow: 0 0 0 3px oklch(22% 0.01 70), 0 0 0 0 oklch(100% 0 0 / 0); background: oklch(100% 0 0); }
+  12% { box-shadow: 0 0 0 3px oklch(22% 0.01 70), 0 0 120px 70px oklch(100% 0.02 95 / 0.95); background: oklch(100% 0 0); }
+  100% { box-shadow: 0 0 0 3px oklch(22% 0.01 70), 0 0 0 0 oklch(100% 0 0 / 0); }
+}
+.camera__lens {
+  left: 34%; top: 56%; width: 37%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(circle, oklch(28% 0.01 70) 58%, oklch(14% 0.01 70) 60% 70%, oklch(30% 0.01 70) 72%, oklch(18% 0.01 70) 100%);
+  box-shadow: 0 8px 20px -6px oklch(0% 0 0 / 0.6), inset 0 1px 0 oklch(100% 0 0 / 0.15);
+}
+.camera__glass {
+  position: absolute; inset: 22%; border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 30%, oklch(100% 0 0 / 0.9) 0 5%, transparent 11%),
+    radial-gradient(circle at 64% 68%, oklch(60% 0.14 300 / 0.55), transparent 42%),
+    radial-gradient(circle at 40% 70%, oklch(55% 0.12 160 / 0.35), transparent 38%),
+    radial-gradient(circle, oklch(22% 0.04 260), oklch(7% 0.01 260));
+  box-shadow: inset 0 0 0 2px oklch(5% 0 0), inset 0 0 14px oklch(0% 0 0 / 0.8);
+}
+.camera__counter {
+  right: 5%; top: 3%; translate: 0 -55%; padding: 0.15em 0.45em; border-radius: 5px;
+  background: oklch(12% 0.01 70); box-shadow: inset 0 0 0 1px oklch(35% 0.01 70);
+  font: 700 clamp(0.85rem, 1.6vw, 1.05rem)/1.2 var(--font-courier), ui-monospace, monospace; color: oklch(76% 0.17 55); letter-spacing: 0.08em;
+}
+.camera__wheel {
+  right: 15%; top: 0; width: 13%; height: 9%; translate: 0 -70%; border-radius: 3px 3px 0 0;
+  background: repeating-linear-gradient(90deg, oklch(30% 0.01 70) 0 2px, oklch(16% 0.01 70) 2px 4px);
+}
+.camera__shutter {
+  position: absolute; left: 12%; top: 0; width: 14%; height: 4.5%; translate: 0 -100%; border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, oklch(80% 0.1 85), oklch(62% 0.1 78)); transition: transform 120ms;
+}
+.camera__tape {
+  left: 8%; right: 30%; top: 46%; padding: 0.4em 0.8em; rotate: -8deg; text-align: center;
+  background: oklch(93% 0.04 85 / 0.92); color: var(--ink); font: 600 clamp(1rem, 2vw, 1.3rem)/1.1 var(--font-caveat), cursive;
+  box-shadow: 0 2px 6px oklch(0% 0 0 / 0.2);
+}
+
+/* Stykówka */
+.contact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0.75rem; border-radius: 4px; background: oklch(17% 0.01 50); box-shadow: 0 30px 60px -30px oklch(0% 0 0 / 0.6); }
+@media (min-width: 768px) { .contact { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.contact__frame { position: relative; padding: 18px 6px 26px; }
+.contact__frame::before, .contact__frame::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 7px;
+  background: radial-gradient(closest-side, oklch(90% 0.01 80 / 0.85) 92%, transparent) 4px 0 / 16px 7px repeat-x;
+}
+.contact__frame::before { top: 5px; }
+.contact__frame::after { bottom: 13px; }
+.contact__photo { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; background: oklch(25% 0.01 50); }
+.contact__no { position: absolute; left: 8px; bottom: 0; font: 700 0.65rem/1 var(--font-courier), ui-monospace, monospace; letter-spacing: 0.1em; color: oklch(72% 0.16 55); }
+
+/* Ciemnia */
+.darkroom {
+  position: relative; overflow: hidden; color: oklch(90% 0.03 40);
+  background: radial-gradient(ellipse 70% 55% at 50% 0%, oklch(38% 0.16 28 / 0.95), transparent 72%), linear-gradient(oklch(16% 0.05 25), oklch(10% 0.03 25));
+}
+.darkroom__lamp { position: absolute; left: 50%; top: 0; width: 18rem; height: 5rem; translate: -50% 0; background: radial-gradient(ellipse at 50% 0%, oklch(68% 0.24 28), oklch(48% 0.2 28 / 0.6) 30%, transparent 70%); pointer-events: none; }
+.darkroom__line { position: relative; overflow-x: auto; scrollbar-width: none; margin-top: clamp(1.5rem, 4vh, 3rem); }
+.darkroom__line::-webkit-scrollbar { display: none; }
+.darkroom__inner { --pw: clamp(8.25rem, 13vw, 12rem); position: relative; min-width: calc(6 * (var(--pw) + clamp(0.75rem, 2vw, 1.75rem))); padding-bottom: 3rem; }
+.darkroom__string { position: absolute; left: 0; top: 0; width: 100%; height: 40px; }
+.darkroom__prints { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); justify-items: center; }
+.darkroom__print { position: relative; width: var(--pw); padding-top: 6px; transform: translateY(var(--drop)); }
+.darkroom__pin {
+  position: absolute; left: 50%; top: -8px; z-index: 2; width: 9px; height: 26px; translate: -50% 0; border-radius: 2px;
+  background: linear-gradient(90deg, oklch(64% 0.07 60), oklch(80% 0.06 70) 45%, oklch(62% 0.07 60));
+  box-shadow: 0 3px 4px oklch(0% 0 0 / 0.4);
+}
+.darkroom__pin::after { content: ""; position: absolute; left: -2px; right: -2px; top: 9px; height: 3px; border-radius: 1px; background: oklch(75% 0.01 80); }
+.darkroom__paper {
+  display: block; padding: 6% 6% 0; transform-origin: 50% 0; rotate: var(--tilt);
+  background: var(--noise), linear-gradient(170deg, oklch(97% 0.01 80), oklch(92% 0.015 70));
+  box-shadow: 0 18px 30px -12px oklch(0% 0 0 / 0.7);
+  animation: sway 5s ease-in-out var(--sway) infinite alternate;
+}
+@keyframes sway { from { transform: rotate(-1.3deg); } to { transform: rotate(1.3deg); } }
+.darkroom__photo { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: oklch(24% 0.02 30); }
+.darkroom__caption { display: flex; height: 2.6em; align-items: center; justify-content: center; font: 600 1.15rem/1 var(--font-caveat), cursive; color: var(--ink); }
+.darkroom__print:not(:has(.darkroom__caption)) .darkroom__paper { padding-bottom: 6%; }
+.darkroom__slot {
+  position: absolute; inset: 0; display: grid; place-items: center; cursor: pointer;
+  background: oklch(93% 0.015 70); color: var(--ink-soft); font: 300 3rem/1 var(--font-display);
+  outline: 1.5px dashed oklch(62% 0.04 40); outline-offset: -10px; transition: background 400ms var(--ease);
+}
+.darkroom__slot:disabled { cursor: default; opacity: 0.8; }
+.darkroom__slot:not(:disabled):hover, .darkroom.is-drag .darkroom__slot { background: oklch(97% 0.04 85); }
+.darkroom__blank { position: absolute; inset: 0; background: linear-gradient(160deg, oklch(30% 0.03 30), oklch(20% 0.02 30)); }
+.darkroom__develop { animation: develop 2.4s ease-in-out infinite alternate; }
+@keyframes develop { from { filter: brightness(2.6) contrast(0.3) sepia(1); } to { filter: brightness(1.2) contrast(0.8) sepia(0.5); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .darkroom__paper, .darkroom__develop, .camera__flash.is-firing { animation: none; }
+}

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { LoopVideo } from "@/components/LoopVideo";
 import { wedding } from "@/content/wedding";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
 import { Ampersand } from "./Ampersand";
-import { EasterEgg } from "./EasterEgg";
+import { SecretTrigger, useSecret } from "./secret";
+import "./intro.css";
 
-const TAPS_TO_OPEN = 5;
 const ARCH_DESKTOP = [14, 39, 12, 39];
 const ARCH_MOBILE = [22, 18, 22, 18];
 
@@ -22,10 +23,9 @@ const center = (el: Element, stage: DOMRect) => {
   return { x: r.left - stage.left + r.width / 2, y: r.top - stage.top + r.height / 2, h: r.height };
 };
 
-export function Intro() {
+export function IntroArch() {
   const root = useRef<HTMLElement>(null);
-  const taps = useRef({ count: 0, timer: 0 });
-  const [egg, setEgg] = useState(false);
+  const { tap, egg } = useSecret();
 
   useEffect(() => {
     const section = root.current;
@@ -57,6 +57,7 @@ export function Intro() {
     }, section);
 
     let scroll: gsap.Context | null = null;
+    let lastProgress = -1;
     const build = () => {
       scroll?.revert();
       scroll = gsap.context(() => {
@@ -73,7 +74,11 @@ export function Intro() {
 
         const arch = { p: 0 };
         const scrollTrigger = { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.6 };
-        gsap.to(arch, { p: 1, ease: "none", scrollTrigger, onUpdate: () => draw(arch.p) });
+        // Przycinanie łuku przerysowuje warstwę wideo, więc liczymy je tylko przy realnej zmianie.
+        gsap.to(arch, { p: 1, ease: "none", scrollTrigger, onUpdate: () => {
+          const p = Math.round(arch.p * 1000) / 1000;
+          if (p !== lastProgress) { lastProgress = p; draw(p); }
+        } });
 
         gsap.timeline({ scrollTrigger, defaults: { ease: "power2.inOut" } })
           .to(ona, { x: mid.x - n1.x, y: mid.y - gap - n1.y, scale: nameScale, duration: 0.7 }, 0.15)
@@ -88,8 +93,15 @@ export function Intro() {
     };
 
     build();
+    // Na telefonie pasek adresu zmienia wysokość okna przy każdym scrollu. Przebudowujemy tylko przy zmianie szerokości.
+    let width = window.innerWidth;
     let timer = 0;
-    const onResize = () => { window.clearTimeout(timer); timer = window.setTimeout(build, 200); };
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(build, 200);
+    };
     window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("resize", onResize);
@@ -99,17 +111,6 @@ export function Intro() {
     };
   }, []);
 
-  const tapAmp = () => {
-    const t = taps.current;
-    t.count += 1;
-    window.clearTimeout(t.timer);
-    t.timer = window.setTimeout(() => (t.count = 0), 1500);
-    if (t.count >= TAPS_TO_OPEN) {
-      t.count = 0;
-      setEgg(true);
-    }
-  };
-
   const nameClass = "font-serif text-[clamp(3rem,11vw,11rem)] font-normal leading-none tracking-[-0.02em] will-change-transform";
 
   return (
@@ -117,9 +118,7 @@ export function Intro() {
       <h1 className="sr-only">{wedding.bride} i {wedding.groom} — zaproszenie na ślub</h1>
       <div className="intro__stage sticky top-0 h-svh overflow-hidden">
         <div className="intro__media absolute inset-0">
-          <video data-autoplay autoPlay muted loop playsInline preload="auto" poster={wedding.media.introPoster} className="size-full object-cover">
-            <source src={wedding.media.introVideo} type="video/mp4" />
-          </video>
+          <LoopVideo src={wedding.media.intro} eager className="size-full object-cover" />
         </div>
         <div aria-hidden className="intro__veil pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(15%_0.012_70/0.55),oklch(15%_0.012_70/0.25)_70%)] opacity-0" />
 
@@ -128,24 +127,18 @@ export function Intro() {
           <span className={`intro__name--r justify-self-end ${nameClass}`}><Dual>{wedding.groom}</Dual></span>
         </div>
 
-        <button
-          type="button"
-          onClick={tapAmp}
-          tabIndex={-1}
-          aria-hidden
-          className="intro__amp absolute left-[calc(50%-clamp(4.5rem,11vw,9rem))] top-[12svh] z-10 w-[clamp(9rem,22vw,18rem)] cursor-default min-[861px]:top-[6svh] focus-visible:outline-none"
-        >
+        <SecretTrigger onTap={tap} className="intro__amp absolute left-[calc(50%-clamp(4.5rem,11vw,9rem))] top-[12svh] z-10 w-[clamp(9rem,22vw,18rem)] min-[861px]:top-[6svh]">
           <Ampersand className="block h-auto w-full" />
-        </button>
+        </SecretTrigger>
 
-        <p className="intro__invite pointer-events-none absolute inset-x-0 top-[clamp(2.5rem,9svh,5rem)] text-center text-[0.75rem] uppercase tracking-[0.32em] text-pearl opacity-0">
+        <p className="intro__invite pointer-events-none absolute inset-x-0 top-[clamp(2.5rem,9svh,5rem)] text-center font-label text-[0.75rem] uppercase tracking-[0.32em] text-pearl opacity-0">
           Zapraszamy na nasz ślub
         </p>
         <p className="intro__date absolute inset-x-0 bottom-[clamp(2rem,6svh,3.5rem)] text-center font-serif text-[1.05rem] tracking-[0.24em] min-[861px]:text-[1.25rem]">
           <Dual>{wedding.dateLabel}</Dual>
         </p>
       </div>
-      <EasterEgg open={egg} onClose={() => setEgg(false)} />
+      {egg}
     </section>
   );
 }

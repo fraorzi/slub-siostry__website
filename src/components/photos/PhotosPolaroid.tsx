@@ -1,22 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, type CSSProperties, type DragEvent, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { Photo } from "@/lib/photos";
 import type { Stage } from "@/lib/stage";
-import { ScrollTrigger } from "@/lib/scroll";
+import { plural, usePhotoUpload } from "./usePhotoUpload";
 
-type Status = "waiting" | "sending" | "done" | "failed";
-type Item = { key: string; preview: string; status: Status; error?: string };
-
-const ACCEPT = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const TILT = [-2.5, 1.8, -1.2, 2.6, -1.8, 1.1, -2.2, 1.5];
-
-const plural = (n: number) => {
-  if (n === 1) return "zdjęcie";
-  const last = n % 10, lastTwo = n % 100;
-  return last >= 2 && last <= 4 && (lastTwo < 10 || lastTwo >= 20) ? "zdjęcia" : "zdjęć";
-};
 
 const Polaroid = ({ children, caption, className = "" }: { children?: ReactNode; caption?: ReactNode; className?: string }) => (
   <span className={`polaroid block rounded-[3px] p-[6.5%] pb-0 ${className}`}>
@@ -32,67 +22,8 @@ const CameraMark = () => (
   </svg>
 );
 
-export function Photos({ stage, initial }: { stage: Stage; initial: Photo[] }) {
-  const [photos, setPhotos] = useState(initial);
-  const [queue, setQueue] = useState<Item[]>([]);
-  const [dragging, setDragging] = useState(false);
-  const picker = useRef<HTMLInputElement>(null);
-  const open = stage !== "before";
-
-  const busy = queue.some((i) => i.status === "waiting" || i.status === "sending");
-  const sent = queue.filter((i) => i.status === "done");
-  const failed = queue.filter((i) => i.status === "failed");
-  const current = queue.find((i) => i.status === "sending") ?? sent[sent.length - 1] ?? null;
-  const position = queue.filter((i) => i.status !== "failed").findIndex((i) => i.status === "sending") + 1;
-
-  const update = (key: string, patch: Partial<Item>) => setQueue((q) => q.map((i) => (i.key === key ? { ...i, ...patch } : i)));
-
-  const send = async (files: File[]) => {
-    const stamp = Date.now();
-    const items = files.map((file, n) => {
-      const key = `${stamp}-${n}-${file.name}`;
-      const item: Item = ACCEPT.includes(file.type)
-        ? { key, preview: URL.createObjectURL(file), status: "waiting" }
-        : { key, preview: "", status: "failed", error: `${file.name} to nie zdjęcie` };
-      return { file, item };
-    });
-    setQueue(items.map((x) => x.item));
-    for (const { file, item } of items.filter((x) => x.item.status === "waiting")) {
-      update(item.key, { status: "sending" });
-      const body = new FormData();
-      body.append("photo", file);
-      const res = await fetch("/api/photos", { method: "POST", body }).catch(() => null);
-      const json = res ? await res.json().catch(() => null) : null;
-      if (res?.ok && json?.photo) {
-        update(item.key, { status: "done" });
-        setPhotos((p) => [json.photo as Photo, ...p]);
-      } else {
-        update(item.key, { status: "failed", error: json?.error ?? "brak połączenia" });
-      }
-    }
-    ScrollTrigger.refresh();
-  };
-
-  const accept = (list: FileList | null) => {
-    const files = Array.from(list ?? []);
-    if (files.length && !busy) void send(files);
-  };
-
-  const drop = open
-    ? {
-        onDragOver: (e: DragEvent) => { e.preventDefault(); setDragging(true); },
-        onDragLeave: () => setDragging(false),
-        onDrop: (e: DragEvent) => { e.preventDefault(); setDragging(false); accept(e.dataTransfer.files); },
-      }
-    : {};
-
-  const status = !open
-    ? "Aparat otworzy się w dniu ślubu. Na każdym stole znajdziesz kod, który tu prowadzi."
-    : busy
-      ? `Wywołuję ${position} z ${queue.length - failed.length}…`
-      : queue.length
-        ? `${sent.length ? `Gotowe — ${sent.length} ${plural(sent.length)} w albumie.` : ""}${failed.length ? ` Nie udało się: ${failed.map((f) => f.error).join(", ")}.` : ""}`
-        : "Bez aplikacji i logowania. Możesz wybrać kilka naraz.";
+export function PhotosPolaroid({ stage, initial }: { stage: Stage; initial: Photo[] }) {
+  const { photos, shown, more, dragging, open, busy, current, choose, drop, status, input } = usePhotoUpload(stage, initial);
 
   return (
     <div className="mt-[clamp(3rem,8vh,5rem)]">
@@ -103,7 +34,7 @@ export function Photos({ stage, initial }: { stage: Stage; initial: Photo[] }) {
           </p>
           <p aria-live="polite" className="mt-5 max-w-[42ch] text-[0.9375rem] text-muted">{status}</p>
           {open && (
-            <button type="button" onClick={() => picker.current?.click()} disabled={busy} className="btn-gold mt-8 cursor-pointer disabled:cursor-progress disabled:opacity-70">
+            <button type="button" onClick={choose} disabled={busy} className="btn-gold mt-8 cursor-pointer disabled:cursor-progress disabled:opacity-70">
               {busy ? "Wysyłam…" : "Wybierz zdjęcia"}
             </button>
           )}
@@ -111,7 +42,7 @@ export function Photos({ stage, initial }: { stage: Stage; initial: Photo[] }) {
 
         <button
           type="button"
-          onClick={() => open && picker.current?.click()}
+          onClick={choose}
           disabled={!open || busy}
           aria-label={open ? "Dodaj zdjęcia" : "Aparat otworzy się w dniu ślubu"}
           className={`group relative mx-auto block w-[clamp(13rem,26vw,19rem)] [perspective:900px] ${open ? "cursor-pointer" : "cursor-default"} disabled:cursor-default`}
@@ -125,7 +56,7 @@ export function Photos({ stage, initial }: { stage: Stage; initial: Photo[] }) {
                   : dragging ? "translate-x-[18%] rotate-[12deg]" : "rotate-[5deg] group-hover:translate-x-[6%] group-hover:rotate-[8deg]"
               }`}
             >
-              {photos[n + 1] && <Image src={photos[n + 1].url} alt="" fill unoptimized sizes="20rem" className="object-cover" />}
+              {photos[n + 1] && <Image src={photos[n + 1].thumb ?? photos[n + 1].url} alt="" fill unoptimized sizes="20rem" className="object-cover" />}
             </Polaroid>
           ))}
           <Polaroid
@@ -147,21 +78,22 @@ export function Photos({ stage, initial }: { stage: Stage; initial: Photo[] }) {
           </Polaroid>
         </button>
 
-        <input ref={picker} type="file" accept={ACCEPT.join(",")} multiple className="sr-only" tabIndex={-1} onChange={(e) => { accept(e.target.files); e.target.value = ""; }} />
+        {input}
       </div>
 
       {open && photos.length > 0 && (
         <div className="mt-[clamp(4rem,10vh,6rem)]">
-          <p className="text-[0.8125rem] uppercase tracking-[0.22em] text-muted">Album gości · {photos.length} {plural(photos.length)}</p>
+          <p className="font-label text-[0.8125rem] uppercase tracking-[0.22em] text-muted">Album gości · {photos.length} {plural(photos.length)}</p>
           <ul className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-            {photos.map((p, i) => (
+            {shown.map((p, i) => (
               <li key={p.name} className="pop" style={{ "--tilt": `${TILT[i % TILT.length]}deg` } as CSSProperties}>
                 <Polaroid className="rotate-(--tilt) transition-[rotate,translate] duration-500 ease-soft hover:-translate-y-1 hover:rotate-0">
-                  <Image src={p.url} alt="Zdjęcie od gościa" fill unoptimized sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
+                  <Image src={p.thumb ?? p.url} alt="Zdjęcie od gościa" fill unoptimized loading="lazy" sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
                 </Polaroid>
               </li>
             ))}
           </ul>
+          {more && <button type="button" onClick={more} className="btn-ghost mt-12">Pokaż więcej</button>}
         </div>
       )}
     </div>

@@ -3,19 +3,11 @@
 import { useEffect } from "react";
 import { gsap, prefersReducedMotion, ScrollTrigger, scrollToElement, startSmoothScroll } from "@/lib/scroll";
 
+const FOILS = ".foil, .foil-bg, .btn-gold";
+
 export function Choreography() {
   useEffect(() => {
     const stop = startSmoothScroll();
-
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => {
-        const video = e.target as HTMLVideoElement;
-        if (e.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      }),
-      { threshold: 0.05 },
-    );
-    document.querySelectorAll<HTMLVideoElement>("video[data-autoplay]").forEach((v) => io.observe(v));
 
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>("[data-time]").forEach((section) => {
@@ -27,17 +19,22 @@ export function Choreography() {
         });
       });
       if (prefersReducedMotion()) return;
-      let foils = document.querySelectorAll<HTMLElement>(".foil, .foil-bg, .btn-gold");
-      ScrollTrigger.create({
-        start: 0,
-        end: "max",
-        onRefresh: () => { foils = document.querySelectorAll<HTMLElement>(".foil, .foil-bg, .btn-gold"); },
-        onUpdate: (self) => {
-          const t = (self.progress * 7) % 2;
-          const shine = (t < 1 ? t : 2 - t).toFixed(4);
-          foils.forEach((el) => el.style.setProperty("--shine", shine));
-        },
-      });
+
+      // Połysk folii: w nowych przeglądarkach liczy go CSS (animation-timeline), tu tylko zapas dla reszty.
+      if (!CSS.supports("animation-timeline: scroll()")) {
+        let foils = document.querySelectorAll<HTMLElement>(FOILS);
+        ScrollTrigger.create({
+          start: 0,
+          end: "max",
+          onRefresh: () => { foils = document.querySelectorAll<HTMLElement>(FOILS); },
+          onUpdate: (self) => {
+            const t = (self.progress * 7) % 2;
+            const shine = (t < 1 ? t : 2 - t).toFixed(3);
+            foils.forEach((el) => el.style.setProperty("--shine", shine));
+          },
+        });
+      }
+
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((frame) => {
         const media = frame.querySelector("img, video");
         gsap.fromTo(frame, { clipPath: "inset(12% 0% 0% 0%)", opacity: 0.001 }, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1, duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: frame, start: "top 85%", once: true } });
@@ -52,10 +49,20 @@ export function Choreography() {
       gsap.utils.toArray<HTMLElement>("[data-draw]").forEach((line) => {
         gsap.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "expo.inOut", scrollTrigger: { trigger: line, start: "top 85%", once: true } });
       });
+      gsap.utils.toArray<HTMLElement>("[data-fly]").forEach((el) => {
+        const dir = el.dataset.fly === "right" ? 1 : -1;
+        gsap.from(el, { x: dir * 90, y: 60, rotate: dir * 7, opacity: 0, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } });
+      });
+      gsap.utils.toArray<SVGPathElement>("[data-route]").forEach((path) => {
+        const track = path.closest("[data-route-track]") ?? path.parentElement;
+        gsap.fromTo(path, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: track, start: "top 65%", end: "bottom 75%", scrub: 0.5 } });
+      });
       gsap.utils.toArray<HTMLElement>("[data-rise]").forEach((el) => {
         gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } });
       });
     });
+
+    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
 
     const onAnchor = (e: MouseEvent) => {
       if (e.defaultPrevented) return;
@@ -68,9 +75,9 @@ export function Choreography() {
     document.addEventListener("click", onAnchor);
 
     return () => {
+      cancelAnimationFrame(raf);
       document.removeEventListener("click", onAnchor);
       ctx.revert();
-      io.disconnect();
       stop();
     };
   }, []);

@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 let lenis: Lenis | null = null;
 
@@ -25,9 +26,18 @@ export function startSmoothScroll(): () => void {
   };
 }
 
-export function scrollToElement(el: HTMLElement) {
-  if (lenis) lenis.scrollTo(el, { duration: 1.6 });
-  else el.scrollIntoView();
+export function scrollToElement(el: HTMLElement, offset = 0, immediate = false) {
+  if (lenis) lenis.scrollTo(el, { duration: 1.6, offset, immediate, force: true });
+  else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset, behavior: immediate || prefersReducedMotion() ? "instant" : "smooth" });
+}
+
+/** Zatrzymuje przewijanie strony pod nakładką (np. easter egg). */
+export function lockScroll(locked: boolean) {
+  if (lenis) {
+    if (locked) lenis.stop();
+    else lenis.start();
+  }
+  document.documentElement.style.overflow = locked ? "hidden" : "";
 }
 
 export { gsap, ScrollTrigger };
