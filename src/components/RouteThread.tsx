@@ -5,10 +5,13 @@ import { prefersReducedMotion, ScrollTrigger } from "@/lib/scroll";
 
 type Stop = { y: number; on: boolean };
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+const f = (n: number) => n.toFixed(1);
+
 /**
- * Złota trasa dnia wzdłuż lewego marginesu: przechodzi przez wszystkie sekcje, rysuje się razem ze scrollem
- * (czoło trasy na 60% wysokości ekranu), a na każdej godzinie zapala się przystanek.
- * Kształt liczy się z rzeczywistych pozycji sekcji, więc dopasowuje się do każdego wariantu.
+ * Złota trasa dnia: płynie marginesem przez kolejne sekcje, na granicy sekcji miękkim łukiem przechodzi
+ * na drugą stronę strony (lewo, prawo, lewo…). Czoło trasy jest zawsze na 60% wysokości ekranu,
+ * a na każdej godzinie zapala się przystanek. Kształt liczy się z rzeczywistych pozycji sekcji.
  */
 export function RouteThread() {
   const root = useRef<HTMLDivElement>(null);
@@ -26,17 +29,33 @@ export function RouteThread() {
 
     let length = 0;
     let stops: Stop[] = [];
+    // Tablica wysokość → długość trasy: trasa idzie zawsze w dół, więc wysokość jednoznacznie wyznacza punkt.
+    let lutY: number[] = [];
+    let lutL: number[] = [];
     let trigger: ScrollTrigger | null = null;
 
-    const update = (progress: number) => {
+    const lengthAtY = (y: number) => {
+      if (!lutY.length) return 0;
+      if (y <= lutY[0]) return 0;
+      if (y >= lutY[lutY.length - 1]) return length;
+      let lo = 0, hi = lutY.length - 1;
+      while (hi - lo > 1) {
+        const mid = (lo + hi) >> 1;
+        if (lutY[mid] < y) lo = mid; else hi = mid;
+      }
+      const t = (y - lutY[lo]) / Math.max(1e-6, lutY[hi] - lutY[lo]);
+      return lutL[lo] + (lutL[hi] - lutL[lo]) * t;
+    };
+
+    const update = (headY: number) => {
       if (!length) return;
-      const drawn = length * progress;
+      const drawn = lengthAtY(headY);
       gold.style.strokeDashoffset = String(length - drawn);
       const p = gold.getPointAtLength(drawn);
-      head.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
-      head.style.opacity = progress > 0.001 && progress < 0.999 ? "1" : "0";
+      head.setAttribute("transform", `translate(${f(p.x)} ${f(p.y)})`);
+      head.style.opacity = drawn > 1 && drawn < length - 1 ? "1" : "0";
       stops.forEach((s, i) => {
-        const on = p.y >= s.y - 2;
+        const on = headY >= s.y - 2;
         if (on !== s.on) {
           s.on = on;
           pins.children[i]?.classList.toggle("is-on", on);
@@ -44,32 +63,47 @@ export function RouteThread() {
       });
     };
 
+    const headY = () => window.scrollY + window.innerHeight * 0.6 - (track.getBoundingClientRect().top + window.scrollY);
+
     const build = () => {
       const width = host.clientWidth;
       const height = track.offsetHeight;
       if (!width || !height) return;
       const top = track.getBoundingClientRect().top;
-      const xc = width / 2;
-      const amp = Math.min(width * 0.32, 18);
+      const gutter = host.querySelector<HTMLElement>(".route__probe")?.offsetWidth || 24;
+      const sideX = [gutter / 2, width - gutter / 2];
+      const bulge = Math.min(gutter * 0.35, 18);
 
-      // Przystanek = wielka godzina w sekcji (albo górna ćwiartka sekcji, gdy jej nie ma).
-      const ys = [...track.querySelectorAll<HTMLElement>("[data-time]")].map((section) => {
-        const marker = section.querySelector(".hour-time");
-        const r = (marker ?? section).getBoundingClientRect();
-        return Math.round((marker ? r.top + r.height / 2 : r.top + Math.min(r.height * 0.25, 240)) - top);
-      }).filter((y, i, all) => y > 0 && y < height && (i === 0 || y - all[i - 1] > 80));
+      const sections = [...track.querySelectorAll<HTMLElement>(":scope > [data-time]")].map((el) => {
+        const r = el.getBoundingClientRect();
+        return { el, top: r.top - top, bottom: r.bottom - top };
+      });
+      if (!sections.length) return;
 
-      const points = [0, ...ys, height];
-      let d = `M${xc} 0`;
-      for (let i = 1; i < points.length; i++) {
-        const y0 = points[i - 1], y1 = points[i], gap = y1 - y0;
-        // Długi odcinek dostaje dodatkowe zakręty, żeby trasa nie była prostą linią.
-        const bends = Math.max(1, Math.round(gap / 700));
-        for (let b = 0; b < bends; b++) {
-          const a = y0 + (gap * b) / bends, z = y0 + (gap * (b + 1)) / bends, side = (i + b) % 2 ? 1 : -1;
-          d += ` C${(xc + side * amp).toFixed(1)} ${(a + (z - a) * 0.3).toFixed(1)} ${(xc - side * amp).toFixed(1)} ${(a + (z - a) * 0.7).toFixed(1)} ${xc} ${z.toFixed(1)}`;
+      // Odcinek w sekcji: łagodny łuk do środka strony. Przejście między sekcjami: miękka „esowata” krzywa
+      // z pionowymi stycznymi, więc trasa nie łamie się na zakrętach.
+      let side = 0;
+      let y = 0;
+      let d = `M${f(sideX[side])} 0`;
+      sections.forEach((s, i) => {
+        const next = sections[i + 1];
+        const x = sideX[side];
+        const inward = side === 0 ? 1 : -1;
+        const reach = next ? Math.min(320, (s.bottom - s.top) * 0.35, (next.bottom - next.top) * 0.35) : 0;
+        const end = next ? s.bottom - reach : height;
+        if (end > y) {
+          const span = end - y;
+          d += ` C${f(x + inward * bulge)} ${f(y + span * 0.33)} ${f(x + inward * bulge)} ${f(y + span * 0.67)} ${f(x)} ${f(end)}`;
+          y = end;
         }
-      }
+        if (next) {
+          const nx = sideX[1 - side];
+          const to = s.bottom + reach;
+          d += ` C${f(x)} ${f(s.bottom)} ${f(nx)} ${f(s.bottom)} ${f(nx)} ${f(to)}`;
+          y = to;
+          side = 1 - side;
+        }
+      });
 
       svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
       svg.style.height = `${height}px`;
@@ -78,22 +112,40 @@ export function RouteThread() {
       length = gold.getTotalLength();
       gold.style.strokeDasharray = `${length} ${length}`;
 
-      stops = ys.map((y) => ({ y, on: false }));
-      pins.replaceChildren(...ys.map((y) => {
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      lutY = [];
+      lutL = [];
+      let maxY = -Infinity;
+      for (let l = 0; l <= length; l += 6) {
+        maxY = Math.max(maxY, gold.getPointAtLength(l).y);
+        lutY.push(maxY);
+        lutL.push(l);
+      }
+
+      // Przystanek = wielka godzina w sekcji (albo górna część sekcji, gdy godziny nie ma).
+      const ys = sections.map((s) => {
+        const marker = s.el.querySelector(".hour-time");
+        if (!marker) return Math.round(s.top + Math.min((s.bottom - s.top) * 0.25, 240));
+        const r = marker.getBoundingClientRect();
+        return Math.round(r.top - top + r.height / 2);
+      }).filter((v, i, all) => v > 0 && v < height && (i === 0 || v - all[i - 1] > 80));
+
+      stops = ys.map((v) => ({ y: v, on: false }));
+      pins.replaceChildren(...ys.map((v) => {
+        const p = gold.getPointAtLength(lengthAtY(v));
+        const g = document.createElementNS(SVG_NS, "g");
         g.setAttribute("class", "route__pin");
-        g.setAttribute("transform", `translate(${xc} ${y})`);
+        g.setAttribute("transform", `translate(${f(p.x)} ${f(p.y)})`);
         g.innerHTML = `<circle class="route__halo" r="9" /><circle class="route__dot" r="3.5" />`;
         return g;
       }));
 
       trigger?.kill();
       if (reduced) {
-        update(1);
+        update(height);
         return;
       }
-      trigger = ScrollTrigger.create({ trigger: track, start: "top 60%", end: "bottom 60%", onUpdate: (self) => update(self.progress), onRefresh: (self) => update(self.progress) });
-      update(trigger.progress);
+      trigger = ScrollTrigger.create({ trigger: track, start: "top bottom", end: "bottom top", onUpdate: () => update(headY()), onRefresh: () => update(headY()) });
+      update(headY());
     };
 
     let raf = 0;
@@ -113,7 +165,8 @@ export function RouteThread() {
   }, []);
 
   return (
-    <div ref={root} aria-hidden className="route pointer-events-none absolute left-0 top-0 z-20 w-(--gutter)">
+    <div ref={root} aria-hidden className="route pointer-events-none absolute inset-x-0 top-0 z-20">
+      <span className="route__probe absolute h-0 w-(--gutter)" />
       <svg className="block w-full overflow-visible">
         <defs>
           <linearGradient id="route-foil" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="700" spreadMethod="reflect">
