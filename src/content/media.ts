@@ -6,7 +6,6 @@ export const media = {
   intro: {
     mobile: "https://videos.pexels.com/video-files/8538349/8538349-hd_1920_1080_25fps.mp4",
     desktop: "https://videos.pexels.com/video-files/8538349/8538349-hd_1920_1080_25fps.mp4",
-    poster: "https://images.unsplash.com/photo-1782786400179-ac3a4e8b1409?w=1600&q=70&auto=format&fit=crop",
   },
   ceremony: {
     mobile: "https://videos.pexels.com/video-files/29918276/12841510_720_1280_25fps.mp4",

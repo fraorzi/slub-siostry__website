@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { preload } from "react-dom";
 import { LoopVideo } from "@/components/LoopVideo";
+import type { VideoSource } from "@/content/media";
 import { wedding } from "@/content/wedding";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
 import { Ampersand } from "./Ampersand";
@@ -23,15 +25,40 @@ const center = (el: Element, stage: DOMRect) => {
   return { x: r.left - stage.left + r.width / 2, y: r.top - stage.top + r.height / 2, h: r.height };
 };
 
+const video: VideoSource = wedding.media.intro;
+
+// Najdłużej, ile ekran ładowania czeka na pierwszą klatkę wideo i fonty. Potem wejście rusza i tak.
+const MAX_WAIT = 4000;
+
+/**
+ * Wejście pokazuje się dopiero, gdy jest gotowe: fonty i pierwsza klatka (plakat albo samo wideo).
+ * Do tego czasu leży ekran ładowania w kolorze tła, więc nic nie miga: ani inny kadr, ani tekst przed animacją.
+ */
+const whenReady = (poster: string | undefined, firstFrame: Promise<void>) => {
+  const fonts = document.fonts?.ready.then(() => {}) ?? Promise.resolve();
+  const frame = poster
+    ? (() => { const img = new Image(); img.src = poster; return img.decode().catch(() => {}); })()
+    : firstFrame;
+  return Promise.race([Promise.all([fonts, frame]), new Promise((r) => window.setTimeout(r, MAX_WAIT))]);
+};
+
 export function IntroArch() {
   const root = useRef<HTMLElement>(null);
   const { tap, egg } = useSecret();
+  const [frame] = useState(() => {
+    let resolve = () => {};
+    const promise = new Promise<void>((r) => { resolve = r; });
+    return { promise, resolve };
+  });
+  // Plakat (pierwsza klatka) pobiera się od razu, razem z HTML, zanim ruszy JS.
+  if (video.poster) preload(video.poster, { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
     const section = root.current;
     const stageEl = section?.querySelector<HTMLElement>(".intro__stage");
     const media = section?.querySelector<HTMLElement>(".intro__media");
-    if (!section || !stageEl || !media) return;
+    const cover = section?.querySelector<HTMLElement>(".intro__cover");
+    if (!section || !stageEl || !media || !cover) return;
 
     const mobile = () => window.matchMedia("(max-width: 860px)").matches;
     const ease = gsap.parseEase("power2.inOut");
@@ -46,15 +73,26 @@ export function IntroArch() {
 
     if (prefersReducedMotion()) {
       media.style.clipPath = "none";
+      cover.style.display = "none";
       return;
     }
 
+    // Stan początkowy wejścia ustawiony pod zasłoną, animacja rusza dopiero po załadowaniu.
     const intro = gsap.context(() => {
-      gsap.from(".intro__names, .intro__date", { opacity: 0, duration: 1.6, ease: "power2.out", delay: 0.2, stagger: 0.15 });
-      gsap.from(media, { opacity: 0, duration: 1.6, ease: "expo.out", delay: 0.1 });
-      gsap.fromTo(".amp-flourish", { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 2.2, ease: "power2.inOut", delay: 0.6 });
-      gsap.from(".amp-glyph, .amp-diamond", { opacity: 0, duration: 1.6, ease: "power2.out", delay: 0.4 });
+      gsap.set(".intro__names, .intro__date, .amp-glyph, .amp-diamond, .intro__media", { opacity: 0 });
+      gsap.set(".amp-flourish", { strokeDasharray: 1, strokeDashoffset: 1 });
     }, section);
+    let cancelled = false;
+    whenReady(video.poster, frame.promise).then(() => {
+      if (cancelled) return;
+      intro.add(() => {
+        gsap.to(cover, { opacity: 0, duration: 0.8, ease: "power1.out", onComplete: () => { cover.style.display = "none"; } });
+        gsap.to(".intro__names, .intro__date", { opacity: 1, duration: 1.6, ease: "power2.out", delay: 0.2, stagger: 0.15 });
+        gsap.to(media, { opacity: 1, duration: 1.6, ease: "expo.out", delay: 0.1 });
+        gsap.to(".amp-flourish", { strokeDashoffset: 0, duration: 2.2, ease: "power2.inOut", delay: 0.6 });
+        gsap.to(".amp-glyph, .amp-diamond", { opacity: 1, duration: 1.6, ease: "power2.out", delay: 0.4 });
+      });
+    });
 
     let scroll: gsap.Context | null = null;
     let lastProgress = -1;
@@ -104,12 +142,13 @@ export function IntroArch() {
     };
     window.addEventListener("resize", onResize);
     return () => {
+      cancelled = true;
       window.removeEventListener("resize", onResize);
       window.clearTimeout(timer);
       scroll?.revert();
       intro.revert();
     };
-  }, []);
+  }, [frame]);
 
   const nameClass = "font-serif text-[clamp(3rem,11vw,11rem)] font-normal leading-none tracking-[-0.02em] will-change-transform";
 
@@ -118,7 +157,7 @@ export function IntroArch() {
       <h1 className="sr-only">{wedding.bride} i {wedding.groom} — zaproszenie na ślub</h1>
       <div className="intro__stage sticky top-0 h-svh overflow-hidden">
         <div className="intro__media absolute inset-0">
-          <LoopVideo src={wedding.media.intro} eager className="size-full object-cover" />
+          <LoopVideo src={video} eager onFirstFrame={frame.resolve} className="size-full object-cover" />
         </div>
         <div aria-hidden className="intro__veil pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(15%_0.012_70/0.55),oklch(15%_0.012_70/0.25)_70%)] opacity-0" />
 
@@ -134,6 +173,9 @@ export function IntroArch() {
         <p className="intro__invite pointer-events-none absolute inset-x-0 top-[clamp(2.5rem,9svh,5rem)] text-center font-label text-[0.75rem] uppercase tracking-[0.32em] text-pearl opacity-0">
           Zapraszamy na nasz ślub
         </p>
+        <div aria-hidden className="intro__cover absolute inset-0 z-20 grid place-items-center bg-bg">
+          <span className="intro__loader foil-bg block h-px w-16" />
+        </div>
         <p className="intro__date absolute inset-x-0 bottom-[clamp(2rem,6svh,3.5rem)] text-center font-serif text-[1.05rem] tracking-[0.24em] min-[861px]:text-[1.25rem]">
           <Dual>{wedding.dateLabel}</Dual>
         </p>

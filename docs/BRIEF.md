@@ -147,3 +147,15 @@ Wprowadzone: świt gra sam, gdy sekcja jest na ekranie, a po wyjechaniu z niej w
 ## Runda designu 8 (2026-10-11)
 
 Decyzja: „Ślub i przyjęcie” = „Tak” w literach, ale bez wlatywania w film. Wielkie „TAK” z wideo ceremonii w środku zmniejsza się scrollem i ląduje na słowie „tak” w nagłówku „Mówimy sobie „tak””, wokół pojawia się reszta sekcji (opis, miejsce, wideo w łuku), potem strona przewija się dalej. Wszystkie sekcje wybrane: panel „Projekt” i pozostałe warianty usunięte.
+
+## Runda designu 9 (2026-10-12)
+
+Uwagi: usunąć trasę dnia; „TAK” ma zostać tym samym krojem i wielkimi literami, a pod koniec wideo w literach płynnie ciemnieje do czarnego; przy pierwszym ładowaniu wejście miga (inny kadr zamiast filmu, tekst pojawia się i znika); koperta z polem do przeprojektowania, kilka wersji do porównania.
+
+Wprowadzone: trasa dnia usunięta. „TAK” ląduje w nagłówku jako „TAK” tym samym krojem (grubość 600), wideo w literach ciemnieje do koloru tekstu, podmiana na nagłówek niewidoczna. Wejście: plakat Unsplash (inny kadr) usunięty, plakatem jest pierwsza klatka filmu z `pnpm media`; wejście czeka pod zasłoną w kolorze tła na fonty i pierwszą klatkę (po 0,6 s pojawia się pulsująca złota kreska, najdłużej 4 s), potem płynnie wjeżdża. Wideo bez plakatu pojawia się płynnie po załadowaniu pierwszej klatki.
+
+Wyszukiwarka miejsca: po dwóch rundach wersji (najpierw winietka, pieczęć i zdanie zamiast koperty, potem 4 wersje koperty) decyzja: jedna klasyczna koperta ślubna od nowa. Zamknięta, z lakiem i napisem „Sprawdź, gdzie siedzisz”; po kliknięciu otwiera się klapka (podszewka w delikatną złotą kratkę), wychodzi kartka w stylu zaproszenia („Ona i On”, „Twoje miejsce”), na niej pole na imię i nazwisko, a po wyborze numer stołu i sąsiedzi. Kliknięcie stołu na sali też otwiera kopertę. Przełącznik wersji usunięty.
+
+## Decyzje do podjęcia — runda 9
+
+1. Uruchomić `pnpm media`, żeby wejście miało plakat z pierwszej klatki (bez tego czeka na samo wideo).

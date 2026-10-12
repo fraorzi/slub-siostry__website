@@ -4,7 +4,18 @@
   .intro__media { clip-path: inset(22% 18% 22% 18% round 300px 300px 0px 0px); }
 }
 
+/* Ekran ładowania: kolor tła, a kreska z folii pojawia się dopiero, gdy ładowanie trwa dłużej.
+   Bez JS zasłona znika sama po kilku sekundach. */
+.intro__cover { animation: intro-cover-out 0.8s ease 8s forwards; }
+@keyframes intro-cover-out { to { opacity: 0; visibility: hidden; } }
+.intro__loader { opacity: 0; transform-origin: center; animation: intro-loader 1.6s ease-in-out 0.6s infinite alternate; }
+@keyframes intro-loader {
+  from { opacity: 0.35; transform: scaleX(0.3); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .intro__cover { display: none; }
   .intro { height: auto; }
   .intro__stage { position: relative; }
   .intro__media { clip-path: none; }

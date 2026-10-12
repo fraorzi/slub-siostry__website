@@ -89,7 +89,7 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
 
   return (
     <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 items-start gap-[clamp(2.5rem,5vw,4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <div ref={search} className="lg:sticky lg:top-24"><EnvelopeSearch api={api} /></div>
+      <div ref={search} className="relative z-10 lg:sticky lg:top-24"><EnvelopeSearch api={api} /></div>
       <figure
         ref={view}
         onPointerDown={onPointerDown}

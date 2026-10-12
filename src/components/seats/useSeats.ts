@@ -19,7 +19,7 @@ export const seatsOf = (tables: Table[]): Seat[] =>
     return { guest, table, angle, x: Math.round((table.x + Math.cos(rad) * CHAIR_R) * 100) / 100, y: Math.round((table.y + Math.sin(rad) * CHAIR_R) * 100) / 100 };
   }));
 
-/** Wspólna logika wyszukiwarki miejsc dla wszystkich wariantów sekcji. */
+/** Logika wyszukiwarki miejsca: podpowiedzi, wybór osoby albo stołu, klawiatura. */
 export function useSeats(tables: Table[], view: RefObject<HTMLElement | null>) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);

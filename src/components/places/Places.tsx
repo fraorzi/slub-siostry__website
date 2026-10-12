@@ -4,10 +4,15 @@ import { LoopVideo } from "@/components/LoopVideo";
 import { wedding } from "@/content/wedding";
 import { TakCeremony } from "./TakCeremony";
 
-/** Tytuł ceremonii z wyróżnionym słowem „tak”: na nim ląduje wielki napis z wideo. */
+/**
+ * Tytuł ceremonii z wyróżnionym słowem „tak”: na nim ląduje wielki napis z wideo. Ten sam krój, grubość
+ * i wielkie litery co napis, a wysokość linii 1 jak u niego, więc po wylądowaniu podmiana jest niewidoczna.
+ */
 const CeremonyTitle = () => {
   const [before, after] = wedding.ceremony.title.split("tak");
-  return after === undefined ? <>{before}</> : <>{before}<span className="tak__target inline-block opacity-0">tak</span>{after}</>;
+  return after === undefined ? <>{before}</> : (
+    <>{before}<span className="tak__target inline-block leading-none tracking-[-0.03em] opacity-0" style={{ fontWeight: 600 }}>TAK</span>{after}</>
+  );
 };
 
 /** Ślub („TAK” z wideo zmienia się w sekcję) i przyjęcie. */
