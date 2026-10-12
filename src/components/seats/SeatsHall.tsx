@@ -3,23 +3,23 @@
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type PointerEvent } from "react";
 import { headTable, type Table } from "@/data/seating";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
+import { AddressEnvelope } from "./AddressEnvelope";
 import { EnvelopeSearch } from "./EnvelopeSearch";
-import { PlaceCardSearch } from "./PlaceCardSearch";
-import { SealSearch } from "./SealSearch";
 import type { SearchProps } from "./search";
-import { SentenceSearch } from "./SentenceSearch";
+import { TagEnvelope } from "./TagEnvelope";
 import { useSeats } from "./useSeats";
 import type { SearchVariant } from "./variants";
 import { VariantSwitch } from "./VariantSwitch";
+import { WindowEnvelope } from "./WindowEnvelope";
 import "./seats.css";
 
 const VIEW = { w: 800, h: 580 };
 
 const SEARCHES: Record<SearchVariant, ComponentType<SearchProps>> = {
-  koperta: EnvelopeSearch,
-  winietka: PlaceCardSearch,
-  pieczec: SealSearch,
-  zdanie: SentenceSearch,
+  obecna: EnvelopeSearch,
+  adres: AddressEnvelope,
+  okienko: WindowEnvelope,
+  bilecik: TagEnvelope,
 };
 
 // Pozycje zaokrąglone: serwer i przeglądarka muszą wypisać identyczne style.
@@ -45,7 +45,7 @@ type Props = { tables: Table[]; variant: SearchVariant; compare?: boolean };
 
 /**
  * Sala w rzucie izometrycznym (CSS 3D). Kamera to dwa transformy: skala i przesunięcie podłogi.
- * Obok wyszukiwarka miejsca w jednej z wersji do porównania (`compare` pokazuje przełącznik).
+ * Obok koperta z wyszukiwarką miejsca w jednej z wersji do porównania (`compare` pokazuje przełącznik).
  */
 export function SeatsHall({ tables, variant, compare = false }: Props) {
   const [kind, setKind] = useState(variant);

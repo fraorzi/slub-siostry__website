@@ -16,7 +16,7 @@ Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). 
 - Klasy folii i `btn-gold` siedzą w `@layer components`, globalny `:focus-visible` w `@layer base` — muszą tam zostać, inaczej nadpisują utility Tailwinda (np. `absolute`).
 - Font nagłówków: Cormorant Garamond (`--font-display`); tekst: General Sans; odręczne podpisy na polaroidach: Caveat (`font-hand`).
 - Easter egg (5× „&” w `Intro`) ma pozostać nieodkrywalny: żadnych podpowiedzi w treści, kursora-rączki ani reakcji na pojedyncze kliknięcie.
-- Wyszukiwarka miejsca o 17:00 ma 4 wersje do porównania (`seats/variants.ts`: Koperta, Winietka, Pieczęć, Zdanie), wspólna logika w `useSeats` i `seats/search.tsx`. Wersję wybiera `/?koperta=…`; przełącznik w prawym dolnym rogu tylko w dev i na podglądach Vercela. Po wyborze zostaje jedna, reszta do usunięcia.
+- Wyszukiwarka miejsca o 17:00 to koperta w 4 wersjach do porównania (`seats/variants.ts`: Obecna, Adres, Okienko, Bilecik), wspólna logika w `useSeats`, `seats/search.tsx` (pole i lista) i `seats/envelope.tsx` (tył koperty, karta, otwieranie). Wersję wybiera `/?koperta=…`; przełącznik w prawym dolnym rogu tylko w dev i na podglądach Vercela. Po wyborze zostaje jedna, reszta do usunięcia.
 - Etap sekcji zdjęć (`before` / `day` / `after`) liczy `src/lib/stage.ts` z `WEDDING_DAY`. Podgląd w dev: `/?etap=przed|dzien|po`.
 - Dostęp: `SITE_KEY` + `src/proxy.ts`; gość wchodzi linkiem `/?k=…` (np. z QR) albo hasłem na `/wejscie`. API sprawdza to samo ciastko.
 - Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` (oryginał + miniatura WebP z `sharp` do albumu) — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF). Logika uploadu wspólna dla wariantów: `src/components/photos/usePhotoUpload.tsx`.

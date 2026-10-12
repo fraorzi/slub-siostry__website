@@ -154,16 +154,16 @@ Uwagi: usunąć trasę dnia; „TAK” ma zostać tym samym krojem i wielkimi li
 
 Wprowadzone: trasa dnia usunięta. „TAK” ląduje w nagłówku jako „TAK” tym samym krojem (grubość 600), wideo w literach ciemnieje do koloru tekstu, podmiana na nagłówek niewidoczna. Wejście: plakat Unsplash (inny kadr) usunięty, plakatem jest pierwsza klatka filmu z `pnpm media`; wejście czeka pod zasłoną w kolorze tła na fonty i pierwszą klatkę (po 0,6 s pojawia się pulsująca złota kreska, najdłużej 4 s), potem płynnie wjeżdża. Wideo bez plakatu pojawia się płynnie po załadowaniu pierwszej klatki.
 
-Wyszukiwarka miejsca w 4 wersjach (`/?koperta=…`, przełącznik „Wersja” w prawym dolnym rogu na dev i podglądach):
+Wyszukiwarka miejsca: zostaje koperta, w 4 wersjach wyglądu i wpisywania imienia (`/?koperta=…`, przełącznik „Wersja” w prawym dolnym rogu na dev i podglądach). Pierwsza próba (winietka, pieczęć, zdanie zamiast koperty) odrzucona: chodziło o lepszą kopertę, nie inny przedmiot.
 
 | Wersja | Opis |
 | --- | --- |
-| Koperta (`koperta`) | obecna: imię na kopercie, klapka się otwiera, wysuwa się karta |
-| Winietka (`winietka`) | składana winietka z imieniem; po wyborze obraca się, z tyłu numer stołu i sąsiedzi |
-| Pieczęć (`pieczec`) | złota pieczęć jako okrągły stół z krzesłami; po wyborze odbija się z numerem stołu, przy krzesłach imiona w kolejności z sali |
-| Zdanie (`zdanie`) | sama typografia: „Nazywam się …”, odpowiedź jako dalszy ciąg zdania z wielkim numerem z folii |
+| Obecna (`obecna`) | dotychczasowa, do porównania: imię na tyle koperty pod klapką |
+| Adres (`adres`) | przód koperty: nadawca, znaczek z perforacją, stempel z datą, gość wpisuje się jako adresat nad adresem sali; po wyborze koperta obraca się, lak puszcza, wychodzi karta |
+| Okienko (`okienko`) | koperta z okienkiem z kalki, imię wpisuje się na kartę widoczną w okienku; po wyborze karta wysuwa się górą, pod imieniem numer stołu i sąsiedzi |
+| Bilecik (`bilecik`) | tył koperty z lakiem przewiązany złotą wstążką, pod nią bilecik, na którym imię pisze się odręcznie (Caveat); po wyborze bilecik spada, wstążka się zsuwa, koperta się otwiera |
 
 ## Decyzje do podjęcia — runda 9
 
-1. Wersja wyszukiwarki miejsca (Koperta, Winietka, Pieczęć, Zdanie).
+1. Wersja koperty (Obecna, Adres, Okienko, Bilecik).
 2. Uruchomić `pnpm media`, żeby wejście miało plakat z pierwszej klatki (bez tego czeka na samo wideo).
