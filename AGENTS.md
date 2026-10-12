@@ -16,10 +16,10 @@ Brief, werdykty, koncepcja i otwarte pytania: [`docs/BRIEF.md`](docs/BRIEF.md). 
 - Klasy folii i `btn-gold` siedzą w `@layer components`, globalny `:focus-visible` w `@layer base` — muszą tam zostać, inaczej nadpisują utility Tailwinda (np. `absolute`).
 - Font nagłówków: Cormorant Garamond (`--font-display`); tekst: General Sans; odręczne podpisy na polaroidach: Caveat (`font-hand`).
 - Easter egg (5× „&” w `Intro`) ma pozostać nieodkrywalny: żadnych podpowiedzi w treści, kursora-rączki ani reakcji na pojedyncze kliknięcie.
-- Wyszukiwarka miejsca o 17:00 (`seats/EnvelopeSearch`): zamknięta koperta z napisem „Sprawdź, gdzie siedzisz”; kliknięcie (albo stół na sali) otwiera klapkę i wysuwa kartkę, na której gość wpisuje imię, a pod nim pojawia się stół i sąsiedzi. Pole i lista podpowiedzi: `seats/search.tsx`, logika: `useSeats`.
+- Wyszukiwarka miejsca o 17:00 (`seats/EnvelopeSearch`): zamknięta koperta z napisem „Sprawdź, gdzie siedzisz”; kliknięcie (albo stół na sali) otwiera klapkę i wysuwa kartkę, na której gość wpisuje imię, a pod nim pojawia się stół i sąsiedzi. Logika wyszukiwania: `useSeats`.
 - Etap sekcji zdjęć (`before` / `day` / `after`) liczy `src/lib/stage.ts` z `WEDDING_DAY`. Podgląd w dev: `/?etap=przed|dzien|po`.
 - Dostęp: `SITE_KEY` + `src/proxy.ts`; gość wchodzi linkiem `/?k=…` (np. z QR) albo hasłem na `/wejscie`. API sprawdza to samo ciastko.
-- Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` (oryginał + miniatura WebP z `sharp` do albumu) — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF). Logika uploadu wspólna dla wariantów: `src/components/photos/usePhotoUpload.tsx`.
+- Zdjęcia gości: `src/lib/photos.ts` zapisuje do `.uploads/` (oryginał + miniatura WebP z `sharp` do albumu) — działa tylko lokalnie. Produkcja wymaga magazynu obiektowego (decyzja w BRIEF). Logika uploadu: `src/components/photos/usePhotoUpload.tsx`.
 - Wartości liczone z `Math.sin/cos` w JSX zaokrąglaj: Node i przeglądarka różnią się na ostatniej cyfrze, co psuje hydrację.
 
 ## Zasady

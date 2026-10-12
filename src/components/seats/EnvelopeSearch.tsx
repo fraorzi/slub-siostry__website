@@ -3,18 +3,42 @@
 import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/content/wedding";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
-import { GuestOptions, guestInput, tableMates, type SearchProps } from "./search";
+import type { SeatsApi } from "./useSeats";
+
+/** Lista podpowiedzi pod polem z imieniem. */
+function GuestOptions({ api, className = "" }: { api: SeatsApi; className?: string }) {
+  const { id, hits, open, active, setActive, pick } = api;
+  if (!open) return null;
+  return (
+    <ul id={`${id}-list`} role="listbox" className={`z-30 overflow-hidden rounded-[1.25rem] bg-ivory p-1.5 text-left text-ink shadow-[0_30px_70px_-24px_oklch(20%_0.03_70/0.45)] ${className}`}>
+      {hits.length ? hits.map((s, i) => (
+        <li
+          key={`${s.table.no}-${s.guest}`}
+          id={`${id}-opt-${i}`}
+          role="option"
+          aria-selected={i === active}
+          onMouseEnter={() => setActive(i)}
+          onMouseDown={(e) => { e.preventDefault(); pick(s); }}
+          className={`flex cursor-pointer items-baseline justify-between gap-4 rounded-[1rem] px-4 py-2.5 transition-colors ${i === active ? "bg-champagne" : ""}`}
+        >
+          <span className="font-serif text-[1.3rem]">{s.guest}</span>
+          <span className="whitespace-nowrap text-[0.8125rem] text-ink-soft">stół {s.table.no}</span>
+        </li>
+      )) : <li className="px-4 py-3 text-[0.9375rem] text-ink-soft">Nie ma takiej osoby na liście. Sprawdź pisownię albo zapytaj świadków.</li>}
+    </ul>
+  );
+}
 
 /**
  * Klasyczna koperta ślubna z napisem „Sprawdź, gdzie siedzisz”. Kliknięcie otwiera klapkę, z koperty
  * wychodzi kartka, a na niej gość wpisuje imię; pod spodem pojawia się numer stołu i sąsiedzi.
  * Kliknięcie stołu na sali przy zamkniętej kopercie też ją otwiera.
  */
-export function EnvelopeSearch({ api, className = "" }: SearchProps) {
-  const { id, input, focus, picked, reset } = api;
+export function EnvelopeSearch({ api }: { api: SeatsApi }) {
+  const { id, input, query, change, hits, open, active, focus, picked, reset, onKeyDown } = api;
   const root = useRef<HTMLDivElement>(null);
   const [opened, setOpened] = useState(false);
-  const mates = tableMates(api);
+  const mates = focus ? focus.table.guests.filter((g) => g !== picked?.guest) : [];
   if (focus && !opened) setOpened(true);
 
   useEffect(() => {
@@ -38,7 +62,7 @@ export function EnvelopeSearch({ api, className = "" }: SearchProps) {
   }, [opened]);
 
   return (
-    <div ref={root} className={`invite ${opened ? "is-open" : ""} ${focus ? "has-result" : ""} ${className}`}>
+    <div ref={root} className={`invite ${opened ? "is-open" : ""} ${focus ? "has-result" : ""}`}>
       <div className="envelope">
         <div className="envelope__back"><div className="envelope__liner" /></div>
 
@@ -47,7 +71,24 @@ export function EnvelopeSearch({ api, className = "" }: SearchProps) {
           <span aria-hidden className="invite-card__rule" />
           <label htmlFor={`${id}-q`} className="font-serif text-[clamp(1.5rem,7cqw,2.1rem)] italic leading-tight">Twoje miejsce</label>
           <div className="relative mt-[3cqw] w-[82%]">
-            <input {...guestInput(api, true)} placeholder="Imię i nazwisko" className="invite-card__input" />
+            <input
+              ref={input}
+              id={`${id}-q`}
+              type="text"
+              autoComplete="off"
+              spellCheck={false}
+              enterKeyHint="search"
+              placeholder="Imię i nazwisko"
+              role="combobox"
+              aria-expanded={open}
+              aria-controls={`${id}-list`}
+              aria-autocomplete="list"
+              aria-activedescendant={open && hits[active] ? `${id}-opt-${active}` : undefined}
+              value={query}
+              onChange={(e) => change(e.target.value)}
+              onKeyDown={onKeyDown}
+              className="invite-card__input"
+            />
             <span aria-hidden className="invite-card__line foil-bg" />
             <GuestOptions api={api} className="absolute inset-x-0 top-full mt-3" />
           </div>
