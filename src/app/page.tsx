@@ -9,13 +9,18 @@ import { MidnightSparklers } from "@/components/midnight/MidnightSparklers";
 import { PhotosCamera } from "@/components/photos/PhotosCamera";
 import { Places } from "@/components/places/Places";
 import { SeatsHall } from "@/components/seats/SeatsHall";
+import { parseSearchVariant, SEARCH_PARAM } from "@/components/seats/variants";
 import { wedding } from "@/content/wedding";
 import { tables } from "@/data/seating";
 import { listPhotos } from "@/lib/photos";
 import { previewStage, stageFor } from "@/lib/stage";
 
+// Przełącznik wersji wyszukiwarki miejsca: w dev i na podglądach Vercela.
+const compare = process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
+
 export default async function Home({ searchParams }: PageProps<"/">) {
-  const stage = previewStage((await searchParams).etap) ?? stageFor(new Date(), wedding.weddingDay);
+  const params = await searchParams;
+  const stage = previewStage(params.etap) ?? stageFor(new Date(), wedding.weddingDay);
   const photos = stage === "before" ? [] : await listPhotos();
 
   return (
@@ -28,7 +33,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <Hour id="h17" time="17:00" theme="day">
           <HourTime>17:00</HourTime>
           <HourTitle>Siadamy do stołów.</HourTitle>
-          <SeatsHall tables={tables} />
+          <SeatsHall tables={tables} variant={parseSearchVariant(params[SEARCH_PARAM])} compare={compare} />
         </Hour>
 
         <GoldenBlinds />

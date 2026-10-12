@@ -137,3 +137,84 @@
 }
 .envelope__input::placeholder { color: oklch(70% 0.02 80); }
 .envelope__input:focus-visible { outline: none; border-bottom-color: oklch(62% 0.09 80); box-shadow: 0 10px 18px -14px oklch(70% 0.1 85 / 0.9); }
+
+/* Winietka: składana karteczka, która obraca się na drugą stronę */
+.placecard { position: relative; width: min(100%, 30rem); margin-inline: auto; perspective: 1800px; }
+.placecard__flip {
+  display: grid; transform-style: preserve-3d;
+  transition: transform 1.2s var(--ease);
+}
+.placecard__flip.is-flipped { transform: rotateY(180deg); }
+.placecard__face {
+  position: relative; grid-area: 1 / 1; display: grid; align-content: center; justify-items: center; text-align: center;
+  min-height: clamp(19rem, 34vw, 23rem); padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.75rem);
+  border-radius: 3px; backface-visibility: hidden;
+  box-shadow: 0 1px 1px oklch(30% 0.02 70 / 0.12), 0 22px 40px -26px oklch(25% 0.03 70 / 0.5);
+}
+/* Zgięcie u góry winietki: cień i jaśniejsza krawędź. */
+.placecard__face::before {
+  content: ""; position: absolute; inset: 0 0 auto; height: 14px; border-radius: 3px 3px 0 0; pointer-events: none;
+  background: linear-gradient(180deg, oklch(86% 0.02 82 / 0.9), oklch(93% 0.012 85 / 0.35) 45%, transparent);
+}
+.placecard__face--back { transform: rotateY(180deg); }
+.placecard__rule { display: block; width: 4.5rem; height: 9px; background:
+  linear-gradient(var(--foil-mid), var(--foil-mid)) center / 100% 1px no-repeat,
+  linear-gradient(45deg, transparent 35%, var(--foil-rich) 35% 65%, transparent 65%) center / 9px 9px no-repeat; }
+.placecard__input {
+  display: block; width: 100%; padding: 0.25rem 0 0.5rem; background: transparent; text-align: center; outline: none;
+  font-family: var(--font-display); font-style: italic; font-size: clamp(1.6rem, 3.2vw, 2.15rem); line-height: 1.15; color: var(--ink);
+  caret-color: var(--foil-deep);
+}
+.placecard__input::placeholder { color: oklch(72% 0.02 80); }
+.placecard__input:focus-visible { outline: none; }
+.placecard__line { display: block; height: 1px; margin-inline: auto; width: 35%; transition: width 900ms var(--ease), box-shadow 900ms var(--ease); }
+.placecard__input:focus-visible + .placecard__line { width: 85%; box-shadow: 0 0 14px 1px oklch(85% 0.1 88 / 0.8); }
+.placecard__shadow {
+  position: absolute; left: 8%; right: 8%; bottom: -1.25rem; height: 1.5rem; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, oklch(30% 0.03 70 / 0.28), transparent);
+}
+@media (prefers-reduced-motion: reduce) { .placecard__flip { transition: none; } }
+
+/* Pieczęć: złota pieczęć jako okrągły stół, wokół krzesła z imionami */
+.seal-search__table { position: relative; width: min(100%, 25rem); aspect-ratio: 1; }
+/* Okrąg, na którym stoją krzesła (promień 25% jak w SealSearch). */
+.seal-search__ring { position: absolute; inset: 25%; border-radius: 50%; box-shadow: 0 0 0 1px var(--line); }
+.seal-search__seat { position: absolute; width: 0; height: 0; }
+.seal-search__chair {
+  position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); box-shadow: 0 0 0 1px var(--line); transition: background 600ms var(--ease), box-shadow 600ms var(--ease);
+}
+.seal-search__chair.is-you { background: var(--foil-rich); box-shadow: 0 0 0 1px var(--foil-deep), 0 0 16px 3px oklch(85% 0.12 88 / 0.7); }
+.seal-search__name {
+  position: absolute; left: 0; top: 0; white-space: nowrap;
+  font-family: var(--font-display); font-size: clamp(0.85rem, 2.8vw, 1.05rem); line-height: 1.15; color: var(--fg);
+}
+/* „Ty” jak na sali: ciemna pigułka. */
+.seal-search__name.is-you { padding: 3px 10px; border-radius: 999px; background: var(--ink); color: var(--pearl); font: 500 12px/1.2 var(--font-body); letter-spacing: 0.06em; }
+.seal-search__wax {
+  position: absolute; left: 50%; top: 50%; width: 36%; aspect-ratio: 1; translate: -50% -50%;
+  display: grid; place-items: center; color: oklch(40% 0.07 70);
+  border-radius: 47% 53% 49% 51% / 52% 47% 53% 48%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 57%, oklch(45% 0.07 70 / 0.22) 59%, transparent 63%),
+    radial-gradient(circle at 34% 28%, var(--foil-light), var(--foil-rich) 38%, var(--foil-mid) 66%, var(--foil-deep));
+  box-shadow: inset 0 -4px 8px oklch(40% 0.06 70 / 0.35), inset 0 3px 6px oklch(100% 0.02 95 / 0.5), 0 10px 22px -8px oklch(30% 0.05 70 / 0.55);
+  text-shadow: 0 1px 0 oklch(95% 0.05 92 / 0.75), 0 -1px 0 oklch(35% 0.06 70 / 0.35);
+}
+.seal-search__wax.is-stamped { animation: stamp 900ms var(--ease) both; }
+@keyframes stamp {
+  0% { transform: scale(1.35) rotate(-10deg); opacity: 0; filter: blur(2px); }
+  45% { transform: scale(0.94) rotate(2deg); opacity: 1; filter: none; }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .seal-search__wax.is-stamped { animation: none; } }
+
+/* Zdanie: pole wpisane w tekst, szerokość rośnie z imieniem */
+.sentence__slot { position: relative; display: inline-grid; vertical-align: baseline; max-width: 100%; }
+.sentence__sizer, .sentence__input { grid-area: 1 / 1; font: inherit; font-style: italic; padding: 0 0.1em 0.05em; min-width: 3ch; }
+.sentence__sizer { visibility: hidden; white-space: pre; overflow: hidden; }
+.sentence__input { width: 100%; background: transparent; color: var(--fg); caret-color: var(--foil-deep); outline: none; }
+.sentence__input::placeholder { color: var(--muted); opacity: 0.55; }
+.sentence__input:focus-visible { outline: none; }
+.sentence__line { position: absolute; left: 0; right: 0; bottom: 0.02em; height: 1px; opacity: 0.7; transition: box-shadow 900ms var(--ease), opacity 600ms var(--ease); }
+.sentence__input:focus-visible ~ .sentence__line { opacity: 1; box-shadow: 0 0 14px 1px oklch(85% 0.1 88 / 0.8); }

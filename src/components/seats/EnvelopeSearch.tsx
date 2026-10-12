@@ -2,14 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
-import type { SeatsApi } from "./useSeats";
+import { GuestOptions, guestInput, tableMates, type SearchProps } from "./search";
 
 /**
  * Wyszukiwarka miejsca jako koperta: gość wpisuje imię w polu adresata, po wyborze klapka się otwiera,
  * wysuwa się karta z numerem stołu i sąsiadami. „Szukaj kogoś innego” zamyka kopertę.
  */
-export function EnvelopeSearch({ api, className = "" }: { api: SeatsApi; className?: string }) {
-  const { id, input, query, change, active, setActive, hits, open, focus, picked, pick, reset, onKeyDown } = api;
+export function EnvelopeSearch({ api, className = "" }: SearchProps) {
+  const { id, focus, picked, reset } = api;
   const root = useRef<HTMLDivElement>(null);
   const opened = useRef(false);
 
@@ -50,7 +50,7 @@ export function EnvelopeSearch({ api, className = "" }: { api: SeatsApi; classNa
     if (instant) tl.progress(1);
   }, [focus]);
 
-  const mates = focus ? focus.table.guests.filter((g) => g !== picked?.guest) : [];
+  const mates = tableMates(api);
 
   return (
     <div ref={root} className={`envelope-search ${className}`}>
@@ -87,42 +87,8 @@ export function EnvelopeSearch({ api, className = "" }: { api: SeatsApi; classNa
 
         <div className="envelope__address">
           <label htmlFor={`${id}-q`} className="block font-label text-[0.6875rem] uppercase tracking-[0.28em] text-ink-soft">Do rąk własnych</label>
-          <input
-            ref={input}
-            id={`${id}-q`}
-            type="text"
-            autoComplete="off"
-            spellCheck={false}
-            enterKeyHint="search"
-            placeholder="Twoje imię i nazwisko"
-            role="combobox"
-            aria-expanded={open}
-            aria-controls={`${id}-list`}
-            aria-autocomplete="list"
-            aria-activedescendant={open && hits[active] ? `${id}-opt-${active}` : undefined}
-            value={focus ? "" : query}
-            onChange={(e) => change(e.target.value)}
-            onKeyDown={onKeyDown}
-            className="envelope__input"
-          />
-          {open && (
-            <ul id={`${id}-list`} role="listbox" className="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-[1.25rem] bg-ivory p-1.5 text-ink shadow-[0_30px_70px_-24px_oklch(20%_0.03_70/0.45)]">
-              {hits.length ? hits.map((s, i) => (
-                <li
-                  key={`${s.table.no}-${s.guest}`}
-                  id={`${id}-opt-${i}`}
-                  role="option"
-                  aria-selected={i === active}
-                  onMouseEnter={() => setActive(i)}
-                  onMouseDown={(e) => { e.preventDefault(); pick(s); }}
-                  className={`flex cursor-pointer items-baseline justify-between gap-4 rounded-[1rem] px-4 py-2.5 transition-colors ${i === active ? "bg-champagne" : ""}`}
-                >
-                  <span className="font-serif text-[1.3rem]">{s.guest}</span>
-                  <span className="whitespace-nowrap text-[0.8125rem] text-ink-soft">stół {s.table.no}</span>
-                </li>
-              )) : <li className="px-4 py-3 text-[0.9375rem] text-ink-soft">Nie ma takiej osoby na liście. Sprawdź pisownię albo zapytaj świadków.</li>}
-            </ul>
-          )}
+          <input {...guestInput(api)} placeholder="Twoje imię i nazwisko" className="envelope__input" />
+          <GuestOptions api={api} className="absolute inset-x-0 top-full mt-2" />
         </div>
       </div>
     </div>

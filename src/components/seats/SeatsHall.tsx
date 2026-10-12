@@ -1,13 +1,26 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type PointerEvent } from "react";
 import { headTable, type Table } from "@/data/seating";
 import { gsap, prefersReducedMotion } from "@/lib/scroll";
 import { EnvelopeSearch } from "./EnvelopeSearch";
+import { PlaceCardSearch } from "./PlaceCardSearch";
+import { SealSearch } from "./SealSearch";
+import type { SearchProps } from "./search";
+import { SentenceSearch } from "./SentenceSearch";
 import { useSeats } from "./useSeats";
+import type { SearchVariant } from "./variants";
+import { VariantSwitch } from "./VariantSwitch";
 import "./seats.css";
 
 const VIEW = { w: 800, h: 580 };
+
+const SEARCHES: Record<SearchVariant, ComponentType<SearchProps>> = {
+  koperta: EnvelopeSearch,
+  winietka: PlaceCardSearch,
+  pieczec: SealSearch,
+  zdanie: SentenceSearch,
+};
 
 // Pozycje zaokrąglone: serwer i przeglądarka muszą wypisać identyczne style.
 const LIGHTS = Array.from({ length: 23 }, (_, i) => {
@@ -28,8 +41,16 @@ const applyShot = (floor: HTMLElement | null, camera: HTMLElement | null, s: Sho
   if (camera) camera.style.transform = `scale(${s.fit * s.zoom})`;
 };
 
-/** Sala w rzucie izometrycznym (CSS 3D). Kamera to dwa transformy: skala i przesunięcie podłogi. */
-export function SeatsHall({ tables }: { tables: Table[] }) {
+type Props = { tables: Table[]; variant: SearchVariant; compare?: boolean };
+
+/**
+ * Sala w rzucie izometrycznym (CSS 3D). Kamera to dwa transformy: skala i przesunięcie podłogi.
+ * Obok wyszukiwarka miejsca w jednej z wersji do porównania (`compare` pokazuje przełącznik).
+ */
+export function SeatsHall({ tables, variant, compare = false }: Props) {
+  const [kind, setKind] = useState(variant);
+  const Search = SEARCHES[kind];
+  const root = useRef<HTMLDivElement>(null);
   const view = useRef<HTMLElement>(null);
   const floor = useRef<HTMLDivElement>(null);
   const camera = useRef<HTMLDivElement>(null);
@@ -88,8 +109,8 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
   }, [focus]);
 
   return (
-    <div className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 items-start gap-[clamp(2.5rem,5vw,4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <div ref={search} className="lg:sticky lg:top-24"><EnvelopeSearch api={api} /></div>
+    <div ref={root} className="mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 items-start gap-[clamp(2.5rem,5vw,4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div ref={search} className="relative z-10 lg:sticky lg:top-24"><Search api={api} /></div>
       <figure
         ref={view}
         onPointerDown={onPointerDown}
@@ -152,6 +173,7 @@ export function SeatsHall({ tables }: { tables: Table[] }) {
             </div>
           </div>
       </figure>
+      {compare && <VariantSwitch value={kind} onChange={setKind} section={root} />}
     </div>
   );
 }
