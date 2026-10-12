@@ -8,7 +8,6 @@ import { IntroArch } from "@/components/intro/IntroArch";
 import { MidnightSparklers } from "@/components/midnight/MidnightSparklers";
 import { PhotosCamera } from "@/components/photos/PhotosCamera";
 import { Places } from "@/components/places/Places";
-import { RouteThread } from "@/components/RouteThread";
 import { SeatsHall } from "@/components/seats/SeatsHall";
 import { wedding } from "@/content/wedding";
 import { tables } from "@/data/seating";
@@ -24,32 +23,27 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       <Choreography />
       <main id="top">
         <IntroArch />
+        <Places />
 
-        <div className="relative">
-          <RouteThread />
+        <Hour id="h17" time="17:00" theme="day">
+          <HourTime>17:00</HourTime>
+          <HourTitle>Siadamy do stołów.</HourTitle>
+          <SeatsHall tables={tables} />
+        </Hour>
 
-          <Places />
+        <GoldenBlinds />
+        <EveningScroll />
 
-          <Hour id="h17" time="17:00" theme="day">
-            <HourTime>17:00</HourTime>
-            <HourTitle>Siadamy do stołów.</HourTitle>
-            <SeatsHall tables={tables} />
-          </Hour>
+        <Hour id="h22" time="22:00" theme="dusk">
+          <HourTime>22:00</HourTime>
+          <HourTitle>Wasze zdjęcia.</HourTitle>
+          <Lead>Fotograf zobaczy dużo. Wy zobaczycie więcej. Wrzucajcie wszystko — z tego złożymy pamiątkę.</Lead>
+          <PhotosCamera stage={stage} initial={photos} />
+        </Hour>
 
-          <GoldenBlinds />
-          <EveningScroll />
-
-          <Hour id="h22" time="22:00" theme="dusk">
-            <HourTime>22:00</HourTime>
-            <HourTitle>Wasze zdjęcia.</HourTitle>
-            <Lead>Fotograf zobaczy dużo. Wy zobaczycie więcej. Wrzucajcie wszystko — z tego złożymy pamiątkę.</Lead>
-            <PhotosCamera stage={stage} initial={photos} />
-          </Hour>
-
-          <MidnightSparklers />
-          <Late />
-          <FinaleDawn />
-        </div>
+        <MidnightSparklers />
+        <Late />
+        <FinaleDawn />
       </main>
     </>
   );

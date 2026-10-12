@@ -174,14 +174,3 @@ body {
   body { transition: none; }
   .pop { animation: none; }
 }
-
-/* Trasa dnia (RouteThread) */
-.route__base { fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 6; }
-.route__gold { fill: none; stroke: url(#route-foil); stroke-width: 1.6; stroke-linecap: round; }
-.route__head { transition: opacity 400ms var(--ease); }
-.route__dot { fill: var(--bg); stroke: var(--line); stroke-width: 1; transition: fill 600ms var(--ease), stroke 600ms var(--ease); }
-.route__halo { fill: oklch(85% 0.1 85 / 0.35); opacity: 0; transform-box: fill-box; transform-origin: center; }
-.route__pin.is-on .route__dot { fill: var(--foil-rich); stroke: var(--foil-deep); }
-.route__pin.is-on .route__halo { animation: route-ping 1.6s var(--ease) 1; }
-@keyframes route-ping { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(2.2); } }
-@media (prefers-reduced-motion: reduce) { .route__pin.is-on .route__halo { animation: none; } }
