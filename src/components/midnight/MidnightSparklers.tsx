@@ -193,7 +193,7 @@ export function MidnightSparklers() {
   }, []);
 
   return (
-    <section ref={root} id="h00" data-time="00:00" data-theme="night" className="relative grid min-h-[110svh] cursor-crosshair touch-pan-y items-end overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,oklch(22%_0.03_60),var(--night)_70%)] px-gutter pb-[clamp(4rem,12vh,7rem)]">
+    <section ref={root} id="h00" data-time="00:00" data-theme="night" className="relative grid min-h-[110svh] cursor-crosshair touch-pan-y items-end overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,oklch(21%_0.032_155),var(--night)_70%)] px-gutter pb-[clamp(4rem,12vh,7rem)]">
       <canvas ref={canvas} aria-hidden className="pointer-events-none absolute inset-0 size-full" />
       <p aria-hidden className="absolute right-gutter top-[clamp(2rem,8vh,4rem)] font-hand text-[1.4rem] text-pearl-soft/70">napisz coś zimnym ogniem</p>
       <div className="pointer-events-none relative">

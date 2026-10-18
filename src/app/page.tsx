@@ -5,6 +5,7 @@ import { Late } from "@/components/finale/Late";
 import { GoldenBlinds } from "@/components/golden/GoldenBlinds";
 import { Hour, HourTime, HourTitle, Lead } from "@/components/hour";
 import { IntroArch } from "@/components/intro/IntroArch";
+import { LeafShade } from "@/components/LeafShade";
 import { MidnightSparklers } from "@/components/midnight/MidnightSparklers";
 import { PhotosCamera } from "@/components/photos/PhotosCamera";
 import { Places } from "@/components/places/Places";
@@ -21,6 +22,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   return (
     <>
       <Choreography />
+      <LeafShade />
       <main id="top">
         <IntroArch />
         <Places />

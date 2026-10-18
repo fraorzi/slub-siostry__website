@@ -5,20 +5,23 @@
    więc nie urywa się w pół drogi po zjechaniu kursorem. */
 @property --glint { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
 
+/* Paleta Miodowego Zakątka: jasny len i szałwia za dnia, sosnowa zieleń wieczorem, złoto jak miód. */
 :root {
-  --ivory: oklch(98% 0.006 90);
-  --champagne: oklch(93.5% 0.03 82);
-  --dusk: oklch(30% 0.03 60);
-  --night: oklch(15% 0.012 70);
-  --ink: oklch(22% 0.012 70);
-  --ink-soft: oklch(45% 0.012 70);
-  --pearl: oklch(95% 0.01 85);
-  --pearl-soft: oklch(75% 0.015 80);
-  --gold: oklch(70% 0.105 80);
-  --gold-bright: oklch(80% 0.11 85);
-  --line-day: oklch(85% 0.015 80);
-  --line-night: oklch(32% 0.02 70);
-  --scrim: oklch(15% 0.012 70 / 0.62);
+  --ivory: oklch(97.8% 0.008 110);
+  --champagne: oklch(93% 0.028 128);
+  --dusk: oklch(29% 0.035 158);
+  --night: oklch(15.5% 0.018 162);
+  --ink: oklch(23% 0.022 158);
+  --ink-soft: oklch(45% 0.025 150);
+  --pearl: oklch(95.5% 0.012 100);
+  --pearl-soft: oklch(76% 0.025 120);
+  --gold: oklch(70% 0.11 78);
+  --gold-bright: oklch(80% 0.115 82);
+  --leaf: oklch(52% 0.07 145);
+  --leaf-soft: oklch(80% 0.045 135);
+  --line-day: oklch(86% 0.022 125);
+  --line-night: oklch(33% 0.03 158);
+  --scrim: oklch(15% 0.018 162 / 0.62);
 
   --foil-deep: oklch(47% 0.08 68);
   --foil-mid: oklch(66% 0.11 76);
@@ -51,7 +54,7 @@ body[data-theme="day"], body[data-theme="champagne"] {
   --foil-rich: oklch(76% 0.085 86);
   --foil-light: oklch(84% 0.07 90);
 }
-body[data-theme="dusk"] { --foil-deep: oklch(56% 0.08 72); --foil-mid: oklch(72% 0.1 80); --foil-rich: oklch(83% 0.1 88); --foil-light: oklch(97% 0.04 95); --bg: var(--dusk); --fg: var(--pearl); --muted: var(--pearl-soft); --line: var(--line-night); --accent: var(--gold-bright); }
+body[data-theme="dusk"] { --foil-deep: oklch(56% 0.09 70); --foil-mid: oklch(72% 0.11 78); --foil-rich: oklch(83% 0.11 86); --foil-light: oklch(97% 0.045 94); --bg: var(--dusk); --fg: var(--pearl); --muted: var(--pearl-soft); --line: var(--line-night); --accent: var(--gold-bright); }
 body[data-theme="night"] { --bg: var(--night); --fg: var(--pearl); --muted: var(--pearl-soft); --line: var(--line-night); --accent: var(--gold-bright); }
 
 @theme inline {
@@ -71,6 +74,8 @@ body[data-theme="night"] { --bg: var(--night); --fg: var(--pearl); --muted: var(
   --color-line-day: var(--line-day);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
+  --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
   --font-serif: var(--font-display), "Didot", Georgia, serif;
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), "Bradley Hand", cursive;
@@ -156,6 +161,20 @@ body {
   color: var(--ink);
 }
 }
+
+/* Cień sosen i brzóz z ogrodu: leży pod treścią (z-index -1 nad tłem body), widoczny tylko za dnia. */
+.leaf-shade {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  color: oklch(36% 0.05 150); opacity: 0; transition: opacity 1.4s var(--ease);
+}
+body[data-theme="day"] .leaf-shade { opacity: 0.07; }
+body[data-theme="champagne"] .leaf-shade { opacity: 0.09; }
+.leaf-shade__layer { position: absolute; inset: -4% -4% auto; will-change: transform; }
+.leaf-shade svg { display: block; width: 100%; height: auto; min-height: 70svh; }
+.leaf-shade__pine { transform-origin: 0% 10%; animation: leaf-sway 11s ease-in-out infinite alternate; }
+.leaf-shade__birch { transform-origin: 85% 0%; animation: leaf-sway 8s ease-in-out -3s infinite alternate-reverse; }
+@keyframes leaf-sway { from { transform: rotate(-0.8deg); } to { transform: rotate(1.1deg) translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .leaf-shade__pine, .leaf-shade__birch { animation: none; } }
 
 /* Połysk folii liczony przez przeglądarkę ze scrolla, bez JS na każdą klatkę. */
 @keyframes shine { from { --shine: 0; } to { --shine: 1; } }
