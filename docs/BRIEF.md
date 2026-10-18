@@ -159,3 +159,23 @@ Wyszukiwarka miejsca: po dwóch rundach wersji (najpierw winietka, pieczęć i z
 ## Decyzje do podjęcia — runda 9
 
 1. Uruchomić `pnpm media`, żeby wejście miało plakat z pierwszej klatki (bez tego czeka na samo wideo).
+
+## Runda designu 10: pod miejsce wesela (2026-10-18)
+
+Miejsce przyjęcia: **Miodowy Zakątek**, Prosta 31A, 96-325 Słabomierz (gm. Radziejowice, ok. 35 km od Warszawy). Prośba: redesign pod estetykę miejsca (zieleń, rośliny) i plan sali bliższy prawdziwemu.
+
+Strona miejsca (miodowy-zakatek.com) jest zablokowana przez politykę sieci środowiska, więc zdjęć i rzutu nie dało się obejrzeć. Z opisów w katalogach weselnych: dwie połączone sale, bankietowa i przeszklona taneczna z widokiem na ogród; stoły okrągłe do 94 osób, prostokątne do 110; ogród z sosnami i brzozami, klimat rustykalny / boho, jasne wnętrza; ślub w plenerze, namiot, strefa chillout.
+
+Wprowadzone:
+- Paleta: len i szałwia za dnia, sosnowa zieleń o zmierzchu, leśna czerń w nocy; złota folia zostaje (miód w nazwie miejsca). Podszewka koperty szałwiowa w złotą kratkę.
+- Cień gałęzi sosny i brzozy za dnia (jak słońce przez przeszklenie), delikatnie się kołysze; znika wieczorem.
+- Sala 3D jako rzut Miodowego Zakątka: sala bankietowa z 8 okrągłymi stołami w trzech rzędach i stołem pary pod ścianą z lampkami, przeszklona sala taneczna z parkietem, wokół ogród z sosnami i brzozami widocznymi przez szkło i nad ścianą; na stołach zielone wianki wokół świec.
+- Przyjęcie o 16:30: nazwa i adres miejsca, „Jak dojechać” prowadzi do Map Google.
+
+## Decyzje do podjęcia — runda 10
+
+1. Oficjalny rzut sali od Miodowego Zakątka (albo zdjęcie planu): wymiary, położenie wejścia, stołu pary, DJ-a i wyjścia do ogrodu. Obecny układ jest przybliżony.
+2. Liczba stołów i gości przy stole (sala mieści do 94 osób przy okrągłych stołach; teraz 8 przykładowych stołów po 6 osób).
+3. Czy ślub też jest w Miodowym Zakątku (plener w ogrodzie)? Wtedy sekcja 15:00 dostaje to samo miejsce.
+4. Adres do potwierdzenia: katalogi podają Prosta 31A albo Słabomierz 29.
+5. Zdjęcia miejsca (sala, ogród) zamiast zdjęć ze stocku w sekcji przyjęcia: do `scripts/media-sources.json`.
