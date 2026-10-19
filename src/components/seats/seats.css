@@ -5,12 +5,12 @@
   --gild: linear-gradient(135deg, var(--pg-deep), var(--pg-light) 35%, var(--pg-rich) 60%, var(--pg-mid));
   perspective: 2400px;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 38%, oklch(98% 0.02 88 / 0.9), transparent 70%),
-    linear-gradient(180deg, oklch(92% 0.025 80), oklch(86% 0.03 74));
-  box-shadow: 0 1px 2px oklch(40% 0.03 75 / 0.12), 0 50px 100px -50px oklch(30% 0.05 70 / 0.55);
+    radial-gradient(ellipse 70% 55% at 50% 30%, oklch(98% 0.02 110 / 0.9), transparent 70%),
+    linear-gradient(180deg, oklch(93% 0.025 140), oklch(84% 0.045 138));
+  box-shadow: 0 1px 2px oklch(40% 0.03 150 / 0.12), 0 50px 100px -50px oklch(28% 0.05 155 / 0.55);
   user-select: none;
 }
-.hall__camera { position: absolute; left: 50%; top: 56%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+.hall__camera { position: absolute; left: 50%; top: 58%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
 .hall__floor {
   position: absolute; left: 0; top: 0; transform-origin: 0 0; transform-style: preserve-3d; border-radius: 4px;
   background:
@@ -20,8 +20,59 @@
 }
 .hall__floor > * { position: absolute; }
 .hall__wall { transform-style: preserve-3d; transform-origin: 0 0; background: linear-gradient(0deg, oklch(95% 0.015 86), oklch(91% 0.02 82) 88%, oklch(84% 0.025 78) 88.5%, oklch(88% 0.02 80)); }
-.hall__wall--back { left: 0; top: 0; width: 800px; height: 190px; transform: rotateX(90deg); }
-.hall__wall--side { left: 800px; top: 0; width: 190px; height: 580px; transform: rotateY(-90deg); background: linear-gradient(90deg, oklch(93% 0.018 84), oklch(89% 0.022 81) 88%, oklch(84% 0.025 78) 88.5%, oklch(87% 0.02 80)); }
+.hall__wall--back { left: 0; top: 0; height: 190px; transform: rotateX(90deg); }
+.hall__wall--side { top: 0; width: 190px; transform: rotateY(-90deg); background: linear-gradient(90deg, oklch(93% 0.018 84), oklch(89% 0.022 81) 88%, oklch(84% 0.025 78) 88.5%, oklch(87% 0.02 80)); }
+/* Ogród wokół sali: trawa pod podłogą, sosny i brzozy zwrócone do kamery. */
+.hall__lawn {
+  transform: translateZ(-1px); border-radius: 50%;
+  background: var(--noise), radial-gradient(closest-side, oklch(78% 0.08 135) 55%, oklch(74% 0.075 140 / 0.7) 80%, oklch(74% 0.075 140 / 0));
+}
+.hall__tree {
+  left: 0; top: 0; width: calc(var(--s) * 130px); height: calc(var(--s) * 320px); transform-origin: 0 0; pointer-events: none;
+  transform: rotateZ(calc(-1 * var(--spin))) rotateX(calc(-1 * var(--tilt))) translate(-50%, -100%);
+}
+.hall__tree--birch { width: calc(var(--s) * 110px); height: calc(var(--s) * 260px); }
+.hall__tree-art { display: block; width: 100%; height: 100%; overflow: visible; }
+.hall__tree::before { content: ""; position: absolute; left: 20%; right: 20%; bottom: -6px; height: 12px; border-radius: 50%; background: oklch(40% 0.06 145 / 0.3); filter: blur(3px); }
+/* Sala taneczna: jasna posadzka, od bankietowej oddziela ją drewniany próg i krótka ściana. */
+.hall__room--dance {
+  transform: translateZ(0.5px);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 69px, oklch(84% 0.012 100) 69px 70px),
+    repeating-linear-gradient(90deg, transparent 0 69px, oklch(84% 0.012 100) 69px 70px),
+    linear-gradient(135deg, oklch(94% 0.01 100), oklch(91% 0.014 105));
+  box-shadow: inset 0 0 50px oklch(60% 0.03 130 / 0.25);
+}
+.hall__threshold { width: 6px; transform: translateZ(1px); background: oklch(62% 0.06 60); }
+.hall__wall--stub { background: linear-gradient(90deg, oklch(93% 0.018 100), oklch(89% 0.02 100) 88%, oklch(82% 0.03 70) 88.5%, oklch(86% 0.025 80)); }
+/* Przeszklenie: szprosy w drewnie, szkło lekko odbija zieleń ogrodu, drzewa widać przez nie. */
+.hall__glass {
+  --frame: oklch(66% 0.06 60);
+  background:
+    linear-gradient(0deg, var(--frame) 0 3px, transparent 3px 30%, var(--frame) 30% calc(30% + 2px), transparent calc(30% + 2px) 86%, var(--frame) 86% 88%, oklch(95% 0.012 100) 88%),
+    repeating-linear-gradient(90deg, var(--frame) 0 3px, transparent 3px 60px),
+    repeating-linear-gradient(115deg, transparent 0 40px, oklch(100% 0 0 / 0.35) 40px 52px, transparent 52px 66px, oklch(100% 0 0 / 0.2) 66px 72px, transparent 72px 140px),
+    linear-gradient(160deg, oklch(96% 0.025 160 / 0.55), oklch(88% 0.04 160 / 0.32) 50%, oklch(97% 0.015 160 / 0.5));
+}
+.hall__wall--side.hall__glass {
+  background:
+    linear-gradient(90deg, var(--frame) 0 3px, transparent 3px 30%, var(--frame) 30% calc(30% + 2px), transparent calc(30% + 2px) 86%, var(--frame) 86% 88%, oklch(95% 0.012 100) 88%),
+    repeating-linear-gradient(0deg, var(--frame) 0 3px, transparent 3px 60px),
+    repeating-linear-gradient(25deg, transparent 0 40px, oklch(100% 0 0 / 0.35) 40px 52px, transparent 52px 66px, oklch(100% 0 0 / 0.2) 66px 72px, transparent 72px 140px),
+    linear-gradient(70deg, oklch(96% 0.025 160 / 0.55), oklch(88% 0.04 160 / 0.32) 50%, oklch(97% 0.015 160 / 0.5));
+}
+/* Na każdym stole wianek z zieleni wokół świecy. */
+.hall__wreath {
+  left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; transform: translateZ(28px);
+  background:
+    radial-gradient(circle at 24% 34%, oklch(76% 0.1 128) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 74% 28%, oklch(70% 0.09 138) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 80% 70%, oklch(78% 0.1 125) 0 2.5px, transparent 3px),
+    radial-gradient(circle at 30% 78%, oklch(68% 0.09 140) 0 3px, transparent 3.5px),
+    radial-gradient(circle, transparent 0 9px, oklch(64% 0.08 138) 9.5px 12.5px, transparent 13px);
+  transition: opacity 600ms var(--ease);
+}
+.hall.has-focus .hall__table:not(.is-hit) .hall__wreath { opacity: 0.45; }
 .hall__light {
   position: absolute; width: 16px; height: 16px; margin: -8px; border-radius: 50%;
   background: radial-gradient(circle, oklch(100% 0.02 95) 0 18%, oklch(90% 0.12 88 / 0.85) 30%, oklch(85% 0.12 85 / 0) 70%);
@@ -34,9 +85,10 @@
   box-shadow: inset 0 0 0 1px var(--pg-mid), inset 0 0 0 6px oklch(96% 0.01 85), inset 0 0 0 7px var(--pg-mid);
 }
 .hall__label { font-family: var(--font-label-face); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: oklch(48% 0.04 72); }
-.hall__label--entrance { transform: translate(-50%, -50%) translateZ(1px); }
-.hall__label--head { text-align: center; letter-spacing: 0.22em; font-size: 10px; transform: translateZ(1px); transition: opacity 600ms var(--ease); }
-.hall.has-focus .hall__label--head { opacity: 0.4; }
+.hall__label--floor { transform: translate(-50%, -50%) translateZ(1px); white-space: nowrap; }
+.hall__head-tag { width: 0; height: 0; transform-style: preserve-3d; }
+.hall__head-tag > .hall__tag { position: absolute; font-size: 10px; letter-spacing: 0.18em; }
+.hall.has-focus .hall__head-tag > .hall__tag { opacity: 0.35; }
 .hall { cursor: grab; }
 .hall:active { cursor: grabbing; }
 .hall__head { transform-style: preserve-3d; }
@@ -100,12 +152,12 @@
   background: var(--noise), linear-gradient(180deg, oklch(91% 0.018 84), oklch(88% 0.022 82));
   box-shadow: 0 50px 90px -40px oklch(25% 0.03 70 / 0.55), 0 2px 4px oklch(30% 0.03 70 / 0.15);
 }
-/* Podszewka: szampański papier w delikatną złotą kratkę. */
+/* Podszewka: szałwiowa zieleń w delikatną złotą kratkę. */
 .envelope__liner, .envelope__flap-face--back::after {
   background:
-    repeating-linear-gradient(45deg, oklch(78% 0.08 82 / 0.5) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(-45deg, oklch(78% 0.08 82 / 0.5) 0 1px, transparent 1px 7px),
-    linear-gradient(160deg, oklch(95.5% 0.025 88), oklch(90% 0.04 82));
+    repeating-linear-gradient(45deg, oklch(80% 0.09 82 / 0.55) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-45deg, oklch(80% 0.09 82 / 0.55) 0 1px, transparent 1px 7px),
+    linear-gradient(160deg, oklch(66% 0.055 145), oklch(52% 0.06 150));
 }
 .envelope__liner { position: absolute; inset: 4% 4% 30% 4%; clip-path: polygon(0 0, 100% 0, 50% 88%); }
 .envelope__pocket {

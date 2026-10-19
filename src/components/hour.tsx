@@ -36,7 +36,7 @@ export const Place = ({ event, className = "mt-12" }: { event: CalendarEvent; cl
   <div className={`max-w-md ${className}`}>
     <span aria-hidden className="foil-bg block h-px w-12" />
     <p className="mt-5 font-label text-[0.75rem] uppercase tracking-[0.2em] text-muted">{event.time} – {event.ends}</p>
-    <p className="mt-2 font-serif text-[clamp(1.6rem,2.4vw,2rem)] leading-tight"><span className="tbd">{event.venue.name}</span></p>
+    <p className="mt-2 font-serif text-[clamp(1.6rem,2.4vw,2rem)] leading-tight"><span className={event.venue.tbd ? "tbd" : undefined}>{event.venue.name}</span></p>
     <p className="mt-1 text-muted">{event.venue.address}</p>
     <div className="mt-7"><PlaceActions event={event} /></div>
   </div>

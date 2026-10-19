@@ -6,6 +6,8 @@ export type Venue = {
   name: string;
   address: string;
   mapUrl: string;
+  /** Placeholder: nazwa podkreślona przerywaną linią, dopóki para nie poda prawdziwej. */
+  tbd?: boolean;
 };
 
 export const wedding = {
@@ -19,7 +21,7 @@ export const wedding = {
     ends: "16:00",
     title: "Mówimy sobie „tak”.",
     lead: "Ceremonia zaczyna się punktualnie. Panna młoda podobno też.",
-    venue: { name: "Kościół / USC — nazwa", address: "ulica, miasto", mapUrl: "#" } satisfies Venue,
+    venue: { name: "Kościół / USC — nazwa", address: "ulica, miasto", mapUrl: "#", tbd: true } satisfies Venue as Venue,
     video: media.ceremony,
   },
   reception: {
@@ -27,8 +29,12 @@ export const wedding = {
     time: "16:30",
     ends: "04:00",
     title: "Przenosimy się na przyjęcie.",
-    lead: "Obiad, toasty, a potem już tylko parkiet.",
-    venue: { name: "Sala / dwór — nazwa", address: "ulica, miasto · parking na miejscu", mapUrl: "#" } satisfies Venue,
+    lead: "Obiad przy oknach na sosnowy ogród, toasty, a potem już tylko parkiet.",
+    venue: {
+      name: "Miodowy Zakątek",
+      address: "Prosta 31A, 96-325 Słabomierz",
+      mapUrl: "https://www.google.com/maps/search/?api=1&query=Miodowy+Zak%C4%85tek%2C+Prosta+31A%2C+S%C5%82abomierz",
+    } satisfies Venue as Venue,
     image: media.reception,
   },
   evening: [
